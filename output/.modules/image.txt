@@ -1,0 +1,6 @@
+<!-- MODULE:image section="1.3" topic="Samsung SSD Magician Overprovisioning and Secure Erase Interface" importance="3" -->
+<!-- MODULE:image section="3.1" topic="Windows NTFS Advanced Attributes EFS Configuration Dialog" importance="3" -->
+<!-- MODULE:image section="4.2" topic="Infineon Discrete Hardware Trusted Platform Module (TPM) Chip" importance="2" -->
+<!-- MODULE:image section="4.4" topic="BitLocker Pre-Boot Authentication PIN Entry Console Interface" importance="2" -->
+<!-- MODULE:image section="4.5" topic="Physical DMA Expansion Ports: FireWire, Thunderbolt, ExpressCard, and PCIe" importance="3" -->
+<!-- MODULE:image section="4.5" topic="Experimental DRAM Capacitor Charge Decay Visualization (Mona Lisa Degradation Over Time)" importance="3" -->

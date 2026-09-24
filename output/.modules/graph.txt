@@ -1,0 +1,7 @@
+<!-- MODULE:graph section="2.1" topic="Passphrase-Based Symmetric File Encryption and Decryption Workflow" importance="3" -->
+<!-- MODULE:graph section="3.2" topic="Hierarchical Cryptographic Key Unwrapping Chain in Windows EFS" importance="4" -->
+<!-- MODULE:graph section="4.1" topic="BitLocker Storage Architecture: Unencrypted Boot Partition vs Encrypted Windows Volume" importance="4" -->
+<!-- MODULE:graph section="4.2" topic="Measured Boot Integrity Chain: CRTM, Firmware, Boot Sectors, and OS Loader Hash Extension" importance="4" -->
+<!-- MODULE:graph section="4.3" topic="BitLocker Multi-Tier Key Hierarchy: SRK, VMK, and FVEK Volume Decryption Flow" importance="4" -->
+<!-- MODULE:graph section="4.6" topic="Self-Encrypting Drive (SED / TCG Opal) Key Flow and Bus Boundary Architecture" importance="4" -->
+<!-- MODULE:graph section="5.2" topic="EFS Dual-Key Encryption and Recovery Agent Architecture" importance="4" -->
