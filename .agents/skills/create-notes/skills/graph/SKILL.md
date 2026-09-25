@@ -2,7 +2,7 @@
 name: graph
 description: >-
   Builds clean, Obsidian-safe Mermaid.js diagrams for workflows, architectures,
-  threat trees, DFDs, and state machines.
+  threat trees, DFDs, and state machines with verb-object edge phrasing.
 # Inherits: tone, detail_level, target_audience, foldable_callouts from create-notes/SKILL.md
 diagram_engine: "mermaid"
 orientation: "TD"
@@ -30,7 +30,15 @@ Generate a graph whenever the material involves:
 - **No Raw HTML**: Do not use `<br>` or `<b>` inside node strings. Use standard text or clean punctuation.
 - **Trust Boundaries**: Use Mermaid `subgraph` blocks to demarcate security domains, administrative jurisdictions, and trust boundaries.
 
-### 3. Narrative Walkthrough
+### 3. Verb-Object Phrasing on Flowchart Edges
+
+> [!IMPORTANT]
+> **Verb-Object Phrasing for Edge Labels**:
+> For all Mermaid flowcharts and state diagrams, edge labels describing transitions, message passing, or step movements MUST strictly use **verb-object phrases** detailing how entities/data move along the flow:
+> - **Good**: `-->|"Transmits signed token"|`, `-->|"Validates public key"|`, `-->|"Issues challenge nonce"|`, `-->|"Logs inspection event"|`
+> - **Bad**: `-->|"Token"|`, `-->|"Public key"|`, `-->|"Yes"|`, `-->|"Next"|`
+
+### 4. Narrative Walkthrough
 Every diagram must be followed immediately by a concise narrative explaining:
 - The operational roles of the depicted entities.
 - How data and control signals transition across boundaries.
@@ -59,13 +67,13 @@ flowchart TD
         inspector["Inspector Scanner (Online / Offline)"]
     end
 
-    passenger -->|"Purchases Ticket"| app
-    app -->|"Encrypted REST / JSON"| api
-    api <-->|"Query / Update"| db
-    api -->|"Issues Signed Token"| app
-    app -->|"Displays QR + Animation"| driver
-    app -->|"Presents QR Barcode"| inspector
-    inspector -.->|"Online Verification Query"| api
+    passenger -->|"Initiates ticket purchase"| app
+    app -->|"Sends encrypted payment request"| api
+    api <-->|"Queries customer account balance"| db
+    api -->|"Issues cryptographically signed token"| app
+    app -->|"Displays dynamic color animation"| driver
+    app -->|"Presents optical QR barcode"| inspector
+    inspector -.->|"Verifies ticket status online"| api
 ```
 ````
 
@@ -73,20 +81,20 @@ flowchart TD
 ````markdown
 ```mermaid
 flowchart TD
-    Root["Root Threat: Counterfeit Ticket"] --> Insider["Insider Attack"]
-    Root --> External["External Attack"]
+    Root["Root Threat: Counterfeit Ticket"] -->|"Originates through"| Insider["Insider Attack"]
+    Root -->|"Originates through"| External["External Attack"]
 
-    Insider --> Petty["Petty Fraud"]
-    Insider --> Systemic["Systemic Corruption"]
+    Insider -->|"Manifests as"| Petty["Petty Fraud"]
+    Insider -->|"Manifests as"| Systemic["Systemic Corruption"]
 
-    Petty --> CustService["Customer Service Staff"]
-    Petty --> ITStaff["IT Support Staff"]
-    Systemic --> Devs["Software Engineers"]
+    Petty -->|"Executed by"| CustService["Customer Service Staff"]
+    Petty -->|"Executed by"| ITStaff["IT Support Staff"]
+    Systemic -->|"Executed by"| Devs["Software Engineers"]
 
-    External --> Backend["Backend Hacking"]
-    External --> ReverseEng["App Reverse Engineering"]
+    External -->|"Targets"| Backend["Backend Hacking"]
+    External -->|"Performs"| ReverseEng["App Reverse Engineering"]
 
-    Backend --> Targeted["Targeted Cybercrime"]
-    Backend --> Opportunistic["Opportunistic Exploits"]
+    Backend -->|"Organized by"| Targeted["Targeted Cybercrime"]
+    Backend -->|"Exploited by"| Opportunistic["Opportunistic Exploits"]
 ```
 ````
