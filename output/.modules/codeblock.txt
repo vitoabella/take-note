@@ -1,4 +1,0 @@
-<!-- MODULE:codeblock section="1.3" topic="Windows Cipher Tool Free Space Overwrite Command" importance="3" -->
-<!-- MODULE:codeblock section="2.1" topic="GnuPG Symmetric Document Encryption Terminal Command" importance="3" -->
-<!-- MODULE:codeblock section="4.6" topic="PowerShell BitLocker Suspension Command during OS Maintenance Updates" importance="3" -->
-<!-- MODULE:codeblock section="5.2" topic="Windows Cipher Command for Inspecting EFS Certificate and DRA Bindings" importance="3" -->

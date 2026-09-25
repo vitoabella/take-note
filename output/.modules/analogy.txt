@@ -1,4 +1,0 @@
-<!-- MODULE:analogy section="1.2" topic="Book index erasure analogy for file deletion vs physical shredding" importance="2" -->
-<!-- MODULE:analogy section="3.2" topic="Safety deposit box nesting analogy for the EFS multi-layer key hierarchy" importance="2" -->
-<!-- MODULE:analogy section="4.3" topic="High-security vault master combination and padlock rekeying analogy for VMK vs FVEK separation" importance="2" -->
-<!-- MODULE:analogy section="5.1" topic="Dual-key safety deposit box and enterprise master vault key analogy for data recovery" importance="2" -->

@@ -1,5 +1,0 @@
-<!-- MODULE:vs_comparison section="1.1" topic="Security vs Usability and Reliability in Storage Encryption" importance="3" -->
-<!-- MODULE:vs_comparison section="3.3" topic="File-Level Encryption (GPG/EFS) vs Full Disk Encryption (BitLocker)" importance="4" -->
-<!-- MODULE:vs_comparison section="4.5" topic="Laptop Vulnerability Across Power States: Running vs Sleeping vs Hibernating vs Powered Down" importance="4" -->
-<!-- MODULE:vs_comparison section="4.6" topic="Host-Software Disk Encryption (BitLocker) vs Hardware Self-Encrypting Drives (TCG Opal / eDrive)" importance="3" -->
-<!-- MODULE:vs_comparison section="5.2" topic="Domain Managed EFS (DRA Enabled) vs Standalone Non-Domain EFS (User Escrow Required)" importance="3" -->
