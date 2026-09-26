@@ -41,12 +41,13 @@ parallelism:
 > - ...**User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before proceeding to next step.
 
 ### Step 1: Preprocessing & PDF Conversion
+- **Base Path Resolution**: 
+> Let `<SKILL_DIR>` be the absolute or workspace-relative directory containing this `SKILL.md` file 
 - Run command below to convert the PDF into clean Markdown text into `<output_dir>` and extract images into `<output_dir>/assets/`:
   ```powershell
-  python .agents/plugins/lecture-notes/skills/create-notes/scripts/convert_pdf.py --pdf "<pdf_path>" --out-dir "<output_dir>" --doc-name "<doc_name>"
+  python <SKILL_DIR>/scripts/convert_pdf.py --pdf "<pdf_path>" --out-dir "<output_dir>" --doc-name "<doc_name>"
   ```
-
-- ...**Perform User Confirmation Check**: If `pause_between_steps: true`, present the summary and pause for user confirmation before loading or executing Step 2:
+- **Perform User Confirmation Check**: If `pause_between_steps: true`, present the summary and pause for user confirmation before loading or executing Step 2:
   | Property | Effective Value | Source |
   | :--- | :--- | :--- |
   | Source PDF | `<path>` | User Input |
@@ -63,7 +64,7 @@ parallelism:
 ### Step 3: Build Markdown Skeleton
 - Build the structural scaffolding note following `references/skeleton.md`
 - If `log_step_outputs: true`, save the it to `<output_dir>/logs/03_skeleton.md` via `write_to_file` tool.
-- Save to `<output_dir>/NOTE - <Type> <Number> - <Topic>.md` via `write_to_file` tool.
+- Save `<file>` as `NOTE - <Type> <Number> - <Topic>.md` to `<output_dir>/` via `write_to_file` tool.
    - **Type codes:**
       - `Lec`: Lectures / Slide Decks
       - `Quiz`: Exam / Quiz Reviews
@@ -74,10 +75,10 @@ parallelism:
 ### Step 4: Parallel Module Population & Live In-Place Note Modification
 
 - Run script
+```powershell
+python <SKILL_DIR>/scripts/extract_modules.py --file "<output_dir>/<file>"
 ```
-python .agents/plugins/lecture-notes/skills/create-notes/scripts/extract_modules.py --file "<output_dir>/<file>" --out-dir "<output_dir>/.modules/"
-```
-- Use `invoke_subagent` tool for every outputted `<module>.txt` with the prompt:
+- Use `invoke_subagent` tool for each module in the response with the prompt:
   ````markdown
   - Write the module: <module> following the [reference file](references/<module>.md)
   - If `lot_step_outputs: true`, save the output using `write_to_file` in `<output_dir>/logs/04_<module>.md`
@@ -99,6 +100,6 @@ python .agents/plugins/lecture-notes/skills/create-notes/scripts/extract_modules
 ### Step 6: Deterministic Format Enforcement & Verification
 - Execute `format_enforcer.py` on the finished note to guarantee all whitespace, callout, and KaTeX invariants:
   ```powershell
-  python .agents/plugins/lecture-notes/skills/create-notes/scripts/format_enforcer.py --file "<note_path>.md"
+  python <SKILL_DIR>/scripts/format_enforcer.py --file "<note_path>.md"
   ```
 - If `log_step_outputs: true`, log final state to `<output_dir>/logs/05_final_note.md`.
