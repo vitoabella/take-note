@@ -1,14 +1,9 @@
 ---
-name: multi_comparison
-description: >-
-  Generates multi-dimensional matrix tables and comparative evaluations across 3 or more
-  algorithms, architectures, or paradigms.
-# Inherits: tone, detail_level, target_audience, foldable_callouts from create-notes/SKILL.md
-heading_style: "Side-by-side comparison"
+# Module-specific overrides
 foldable_callouts: true
 ---
 
-# Multi-Option Comparison Skill (`/multi_comparison`)
+# Multi-Option Comparison Module Specification
 
 Use this skill to populate multi-dimensional comparison tables across 3 or more candidate entities (`<!-- MODULE:multi_comparison ... -->`) in the lecture note skeleton.
 
@@ -16,26 +11,38 @@ Use this skill to populate multi-dimensional comparison tables across 3 or more 
 
 ## Core Guidelines & Format Reference
 
-### 1. Heading Convention
-- Always use the standardized heading: `### Side-by-side comparison`.
-
-### 2. Table Construction Rules
+### 1. Table Construction Rules
 - Hard Rule: **Fill every single table cell**. Never leave empty cells or unexplained dashes.
 - Include concrete, technical evaluation dimensions: Primary Goal, Adversarial Invariant, Overhead, Typical Failure Mode.
 - **Matrix Duals / Encodings**: When comparing access-control or dual models (e.g., ACL vs Capability), emphasize the relevant perspective with bold/highlighted cells.
 
-### 3. Synthesis & Pareto Frontier
+### 2. Synthesis & Pareto Frontier
 Follow the matrix with a concise breakdown specifying:
 - Which option is optimal under what specific resource or operational constraints.
 - Why no single option dominates all evaluation dimensions.
 
 ---
 
-## Reference Template
+## Depth Specification
+
+- **`depth="1"` (Mentioned in Passing)**:
+  - 3-attribute high-level matrix comparing core distinctions using simple, relatable terms.
+  - Omit the synthesis callout.
+- **`depth="2"` (Discussed, but not fleshed out)**:
+  - Standard matrix (4–5 evaluation dimensions) with short phrases.
+  - Includes folded synthesis callout (`> [!info]- Architectural Trade-Off Synthesis`) with concise takeaways.
+- **`depth="3"` (Explained in-detail in source - Default)**:
+  - Exhaustive multi-attribute matrix (6+ dimensions) evaluating technical paradigms across all candidate entities.
+  - Includes a comprehensive folded synthesis callout (`> [!info]- Architectural Trade-Off Synthesis`) analyzing Pareto boundaries and deployment constraints.
+
+---
+
+## Expected Output Format
+
+> [!IMPORTANT]
+> Worker modules output **ONLY** the body content below. Do not generate section headings (`##`, `###`) or introductory quote callouts (`> [!quote]`).
 
 ```markdown
-### Side-by-side comparison
-
 | Evaluation Dimension | STRIDE | DREAD | Risk = P × Damage |
 | :--- | :--- | :--- | :--- |
 | **Primary Paradigm** | Component-level threat categorization | Quantitative threat ranking heuristic | Classical economic risk formula |

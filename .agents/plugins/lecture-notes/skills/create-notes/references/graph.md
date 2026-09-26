@@ -1,15 +1,11 @@
 ---
-name: graph
-description: >-
-  Builds clean, Obsidian-safe Mermaid.js diagrams for workflows, architectures,
-  threat trees, DFDs, and state machines with verb-object edge phrasing.
-# Inherits: tone, detail_level, target_audience, foldable_callouts from create-notes/SKILL.md
+# Module-specific overrides
 diagram_engine: "mermaid"
 orientation: "TD"
 foldable_callouts: true
 ---
 
-# Graph Skill (`/graph`)
+# Graph & Diagram Module Specification
 
 Use this skill to convert architectural schematics, threat trees, data flow diagrams, and protocol workflows (`<!-- MODULE:graph ... -->`) into clean Mermaid.js diagrams.
 
@@ -31,25 +27,37 @@ Generate a graph whenever the material involves:
 - **Trust Boundaries**: Use Mermaid `subgraph` blocks to demarcate security domains, administrative jurisdictions, and trust boundaries.
 
 ### 3. Verb-Object Phrasing on Flowchart Edges
-
-> [!IMPORTANT]
-> **Verb-Object Phrasing for Edge Labels**:
-> For all Mermaid flowcharts and state diagrams, edge labels describing transitions, message passing, or step movements MUST strictly use **verb-object phrases** detailing how entities/data move along the flow:
-> - **Good**: `-->|"Transmits signed token"|`, `-->|"Validates public key"|`, `-->|"Issues challenge nonce"|`, `-->|"Logs inspection event"|`
-> - **Bad**: `-->|"Token"|`, `-->|"Public key"|`, `-->|"Yes"|`, `-->|"Next"|`
+For all Mermaid flowcharts and state diagrams, edge labels describing transitions, message passing, or step movements MUST strictly use **verb-object phrases**:
+- **Good**: `-->|"Transmits signed token"|`, `-->|"Validates public key"|`, `-->|"Issues challenge nonce"|`
+- **Bad**: `-->|"Token"|`, `-->|"Public key"|`, `-->|"Yes"|`
 
 ### 4. Narrative Walkthrough
-Every diagram must be followed immediately by a concise narrative explaining:
+Accompany diagrams with a concise narrative explaining:
 - The operational roles of the depicted entities.
 - How data and control signals transition across boundaries.
 - Critical single points of failure or adversarial exposure points.
 
 ---
 
-## Reference Templates
+## Depth Specification
 
-### 1. Architectural Diagram with Trust Boundaries
-````markdown
+- **`depth="1"` (Mentioned in Passing)**:
+  - 3–4 node simple linear or hierarchical chart with plain text labels.
+  - Omit narrative walkthrough callout.
+- **`depth="2"` (Discussed, but not fleshed out)**:
+  - Standard flowchart or state machine with verb-object edge labels.
+  - Accompanied by a concise folded walkthrough callout (`> [!info]- Architectural Walkthrough`).
+- **`depth="3"` (Explained in-detail in source - Default)**:
+  - Comprehensive multi-subgraph architectural schematic or threat tree with explicit trust boundaries and verb-object transitions.
+  - Includes an in-depth folded walkthrough callout analyzing failure points, threat exposures, and mitigation boundaries.
+
+---
+
+## Expected Output Format
+
+> [!IMPORTANT]
+> Worker modules output **ONLY** the body content below. Do not generate section headings (`##`, `###`) or introductory quote callouts (`> [!quote]`).
+
 ```mermaid
 flowchart TD
     subgraph ClientDomain["Passenger Domain (Untrusted)"]
@@ -75,26 +83,8 @@ flowchart TD
     app -->|"Presents optical QR barcode"| inspector
     inspector -.->|"Verifies ticket status online"| api
 ```
-````
 
-### 2. Hierarchical Threat Tree Taxonomy
-````markdown
-```mermaid
-flowchart TD
-    Root["Root Threat: Counterfeit Ticket"] -->|"Originates through"| Insider["Insider Attack"]
-    Root -->|"Originates through"| External["External Attack"]
-
-    Insider -->|"Manifests as"| Petty["Petty Fraud"]
-    Insider -->|"Manifests as"| Systemic["Systemic Corruption"]
-
-    Petty -->|"Executed by"| CustService["Customer Service Staff"]
-    Petty -->|"Executed by"| ITStaff["IT Support Staff"]
-    Systemic -->|"Executed by"| Devs["Software Engineers"]
-
-    External -->|"Targets"| Backend["Backend Hacking"]
-    External -->|"Performs"| ReverseEng["App Reverse Engineering"]
-
-    Backend -->|"Organized by"| Targeted["Targeted Cybercrime"]
-    Backend -->|"Exploited by"| Opportunistic["Opportunistic Exploits"]
-```
-````
+> [!info]- Architectural Walkthrough
+> - **Client Domain**: Untrusted execution environment where reverse engineering and replay attacks originate.
+> - **Transport Domain**: Protected core validating transactions and maintaining authoritative ledger state.
+> - **Inspection Domain**: Distributed validation points balancing passenger throughput against cryptographic verification guarantees.

@@ -1,16 +1,12 @@
 ---
-name: codeblock
-description: >-
-  Replicates and annotates source code, pseudo-code, and CLI terminal commands
-  strictly present in the source PDF.
-# Inherits: tone, detail_level, target_audience, foldable_callouts from create-notes/SKILL.md
+# Module-specific overrides
 include_line_annotations: true
 include_complexity_analysis: true
 target_language: "match_source"
 foldable_callouts: true
 ---
 
-# Codeblock Skill (`/codeblock`)
+# Codeblock Module Specification
 
 Use this skill to populate code modules (`<!-- MODULE:codeblock ... -->`) marked in the skeleton.
 
@@ -31,9 +27,22 @@ Use this skill to populate code modules (`<!-- MODULE:codeblock ... -->`) marked
 
 ---
 
-## Reference Template
+## Depth Specification
 
-```markdown
+- **`depth="1"` (Mentioned in Passing)**:
+  - Replicated code snippet with a 1-line usage comment. Omit breakdown callouts.
+- **`depth="2"` (Discussed, but not fleshed out)**:
+  - Code snippet with folded parameter and command breakdown callout (`> [!info]- Parameter & Command Breakdown`).
+- **`depth="3"` (Explained in-detail in source - Default)**:
+  - Full verbatim code replication with line-by-line annotations, execution invariants, and algorithmic complexity callout (`> [!info]- Algorithmic Complexity`).
+
+---
+
+## Expected Output Format
+
+> [!IMPORTANT]
+> Worker modules output **ONLY** the body content below. Do not generate section headings (`##`, `###`) or introductory quote callouts (`> [!quote]`).
+
 ```bash
 # Inspecting X.509 Certificate contents via OpenSSL
 openssl x509 -in cert.pem -noout -text
@@ -44,4 +53,3 @@ openssl x509 -in cert.pem -noout -text
 > - `-in cert.pem`: Specifies the target PEM-formatted certificate file.
 > - `-noout`: Suppresses the raw base64-encoded certificate container output.
 > - `-text`: Pretty-prints all certificate fields (Issuer, Subject, Validity, Public Key, Extensions, Signature).
-```

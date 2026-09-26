@@ -1,16 +1,11 @@
 ---
-name: table_definitions
-description: >-
-  Compiles a comprehensive glossary of technical terms in the Appendix,
-  sorted by importance to the main topic, with internal wikilinks pointing back
-  to where each term was first introduced in the document.
-# Inherits: target_audience, use_wikilinks from create-notes/SKILL.md
+# Module-specific overrides
 sort_order: "importance"
 tone: "rigorous"
 detail_level: "exhaustive"
 ---
 
-# Technical Terms Glossary Skill (`/table_definitions`)
+# Glossary & Definitions Appendix Specification
 
 Use this skill to compile the master glossary table (`<!-- MODULE:table_definitions ... -->`) in the appendix of the lecture note.
 
@@ -18,13 +13,7 @@ Use this skill to compile the master glossary table (`<!-- MODULE:table_definiti
 
 ## Core Guidelines & Format Reference
 
-### 1. Section Header & Placement
-- Place the glossary in the Appendix under:
-  ```markdown
-  ## Definition of Terms
-  ```
-
-### 2. Table Structure & Columns
+### 1. Table Structure & Columns
 - Exactly two columns:
   ```markdown
   | Term | Definition |
@@ -32,28 +21,36 @@ Use this skill to compile the master glossary table (`<!-- MODULE:table_definiti
   | **[[#Section Heading|Term]]** | Precise, technically rigorous definition explaining the concept in domain context. |
   ```
 
-### 3. Bidirectional In-Note Wikilinking Rule
+### 2. Bidirectional In-Note Wikilinking Rule
+- Every term in the glossary MUST include an internal Obsidian wikilink referencing the exact section heading in the document where the concept was first introduced:
+  - Format: `**[[#Exact Section Heading|Term Display Name]]**`
+  - **Example**: `**[[#1.2 Fundamental Terminology & Quantitative Risk|Vulnerability]]**`
+  - **Example**: `**[[#4.2 The STRIDE Methodology & Data Flow Diagrams|STRIDE]]**`
 
-> [!IMPORTANT]
-> **Wikilink Back to Source Section**:
-> Every term in the glossary MUST include an internal Obsidian wikilink referencing the exact section heading in the document where the concept was first introduced:
-> - Format: `**[[#Exact Section Heading|Term Display Name]]**`
-> - **Example**: `**[[#1.2 Fundamental Terminology & Quantitative Risk|Vulnerability]]**`
-> - **Example**: `**[[#4.2 The STRIDE Methodology & Data Flow Diagrams|STRIDE]]**`
-> This enables immediate bidirectional navigation between the appendix glossary and the explanatory narrative.
-
-### 4. Sorting & Completeness Rules
+### 3. Sorting & Completeness Rules
 - **Sort by Importance**: Sort terms strictly by importance to the main lecture topic, most important first.
 - **Full Coverage**: Cover all primary domain terminology introduced throughout the entire note.
 - **No Empty Tables**: Never emit empty placeholder tables or incomplete rows.
 
 ---
 
-## Reference Template
+## Depth Specification
+
+- **`depth="1"` (Mentioned in Passing)**:
+  - Core foundational terms only (5–8 key terms) with concise 1-sentence definitions.
+- **`depth="2"` (Discussed, but not fleshed out)**:
+  - Standard glossary (10–15 terms) covering major concepts with concise definitions and section wikilinks.
+- **`depth="3"` (Explained in-detail in source - Default)**:
+  - Exhaustive domain glossary covering all technical terms, threat models, mechanisms, and cryptographic constructs introduced throughout the lecture note, each paired with precise definitions and bidirectional wikilinks.
+
+---
+
+## Expected Output Format
+
+> [!IMPORTANT]
+> Worker modules output **ONLY** the body content below. Do not generate section headings (`##`, `###`) or introductory quote callouts (`> [!quote]`).
 
 ```markdown
-## Definition of Terms
-
 | Term | Definition |
 | :--- | :--- |
 | **[[#1.2 Fundamental Terminology & Quantitative Risk|Threat]]** | A potential event, actor, or circumstance with the capability to cause harm, loss, or unauthorized state modification to a system asset. |

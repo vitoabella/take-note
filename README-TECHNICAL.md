@@ -126,17 +126,45 @@ To ensure deterministic execution and prevent tool pollution or unauthorized ope
 - **Detection Heuristic**:
   Identifies slides with embedded raster images (`len(page.images) > 0`) or complex vector drawings (`curves + lines + rects >= 10`), rendering high-resolution 2.0x PNG assets into `/assets` with sanitized descriptive names.
 
-### B. Module Tag Scanner & Grouper (`extract_modules.py`)
-- **Path**: `.agents/plugins/lecture-notes/skills/create-notes/scripts/extract_modules.py`
-- **Regex**: `(<!--\s*MODULE:([A-Za-z0-9_-]+)(?:\s+.*?)?-->)`
+### B. Active Tag Scanner & Subagent Dispatcher (`extract_and_dispatch.py`)
+- **Path**: `.agents/plugins/lecture-notes/skills/create-notes/scripts/extract_and_dispatch.py`
 - **CLI Usage**:
   ```powershell
-  python .agents/plugins/lecture-notes/skills/create-notes/scripts/extract_modules.py --file "./output/NOTE - Lec 1 - Threat Analysis.md"
+  python .agents/plugins/lecture-notes/skills/create-notes/scripts/extract_and_dispatch.py --file "./output/NOTE - Lec 1 - Threat Analysis.md"
   ```
-- **Outputs**:
-  - `stdout`: Bare comma-separated list of unique active module types without quotes:
-    `analogy, example, formula, graph, list, multi_comparison, summary, table_definitions, table_formulas, vs_comparison`
-  - Filesystem: Generates isolated tag manifests in `output/.modules/<skill_name>.txt` containing exact placeholder lines from the skeleton.
+- **Functionality**:
+  - Dynamically scans active `<!-- MODULE:... -->` tags.
+  - Writes per-module task queues into `output/.modules/<module_type>.txt`.
+  - Automatically respects `parallelism.max_subagents` from `create-notes/SKILL.md`.
+  - Pre-computes `output/.modules/dispatch_manifest.json` containing the exact `Subagents` array for direct input to `invoke_subagent`. Only modules present in the skeleton receive a worker subagent.
+
+### C. Atomic In-Place Content Splicer (`insert_module.py`)
+- **Path**: `.agents/plugins/lecture-notes/skills/create-notes/scripts/insert_module.py`
+- **CLI Usage**:
+  ```powershell
+  python .agents/plugins/lecture-notes/skills/create-notes/scripts/insert_module.py \
+    --note "./output/NOTE - Lec 1 - Threat Analysis.md" \
+    --module "formula" \
+    --section "2.1" \
+    --content-file "./output/.modules/ready/formula_2.1.md"
+  ```
+- **Guarantees**:
+  - Atomically splices populated content directly underneath the matching tag.
+  - Preserves comment anchors intact above content for spot-modifications.
+  - Eliminates line-number drift and race conditions during parallel population.
+
+### D. Deterministic Format & Whitespace Enforcer (`format_enforcer.py`)
+- **Path**: `.agents/plugins/lecture-notes/skills/create-notes/scripts/format_enforcer.py`
+- **CLI Usage**:
+  ```powershell
+  python .agents/plugins/lecture-notes/skills/create-notes/scripts/format_enforcer.py --file "./output/NOTE - Lec 1 - Threat Analysis.md"
+  ```
+- **Invariants Enforced**:
+  - Strictly encloses `# Overview` study tree in triple backticks on separate lines.
+  - Eliminates blank lines between headings and `> [!quote]` callouts.
+  - Wraps bare slide images in folded cite callouts (`> [!cite]- Slide <N>: <Caption>\n> ![[<image>.png]]`).
+  - Cleans up accidental omission disclaimers (`*(Table of contents omitted)*`).
+  - Removes forbidden document H1 titles before Overview.
 
 ---
 

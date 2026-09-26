@@ -1,15 +1,11 @@
 ---
-name: formula
-description: >-
-  Formats mathematical and quantitative formulas with conceptual overbrace/underbrace annotations,
-  hybrid captions, detailed breakdowns, and practice callouts.
-# Inherits: target_audience, math_delimiter, foldable_callouts from create-notes/SKILL.md
+# Module-specific overrides
 tone: "rigorous"
 include_derivations: true
 foldable_callouts: true
 ---
 
-# Formula Skill (`/formula`)
+# Formula Module Specification
 
 Use this skill to populate mathematical, quantitative, and cryptographic equation modules (`<!-- MODULE:formula ... -->`) in the lecture note skeleton.
 
@@ -17,25 +13,19 @@ Use this skill to populate mathematical, quantitative, and cryptographic equatio
 
 ## Core Guidelines & Format Reference
 
-> [!IMPORTANT]
-> **Mandatory 4-Part Formula Structure**:
-> Every display formula in the body of the lecture note MUST include all four of the following components in order:
-
 ### 1. `$$ ... $$` with Conceptual `\overbrace` and `\underbrace` Part Labels
 - Brace meaningful chunks of the expression (terms, factors, operators carrying a distinct idea)—not merely algebraic roles like "numerator" or "denominator".
 - Part labels must state the **conceptual role** that chunk plays in the mechanism.
 - Good: `\underbrace{\text{Risk}}_{\text{financial exposure}} = \overbrace{P(\text{attack})}^{\text{threat likelihood}} \times \underbrace{\text{Damage}}_{\text{monetary impact in €}}`
-- Bad: `\underbrace{A}_{\text{factor 1}} \times \overbrace{B}^{\text{factor 2}}`
 
 ### 2. Caption (Required, immediately under `$$`)
 - One italic line on its own line: `*...*` (no quotation marks).
 - Must restate the equation in words or as a **hybrid** of words + math, preserving operators and structure.
-- Good: `*Quantitative Risk = probability of attack occurrence multiplied by asset damage in euros*`
 
 ### 3. `> [!info]- Breakdown of the formula`
 - **Opening**: What the formula computes/decides and how it serves the surrounding topic.
 - **Symbol Analysis**: Plain-text definition of each variable, symbol, and unit.
-- **Braced-Section Comparative Effects**: Explain how each piece drives the result (e.g., "increasing $P$ shifts...", "scaling damage produces...").
+- **Braced-Section Comparative Effects**: Explain how each piece drives the result.
 - **Assumptions & Bounds**: Domain restrictions (e.g., $P \in [0, 1]$, currency scale).
 
 ### 4. `> [!example]-` Practice Callout
@@ -44,7 +34,23 @@ Use this skill to populate mathematical, quantitative, and cryptographic equatio
 
 ---
 
-## Reference Template
+## Depth Specification
+
+- **`depth="1"` (Mentioned in Passing)**:
+  - Compact display formula only (`$$ ... $$` with basic conceptual braces and italic caption).
+  - Omit breakdown and practice check callouts.
+- **`depth="2"` (Discussed, but not fleshed out)**:
+  - Display formula + caption + folded breakdown callout (`> [!info]- Breakdown of the formula`).
+  - Omit practice check callout.
+- **`depth="3"` (Explained in-detail in source - Default)**:
+  - Complete mandatory 4-part structure: display formula with conceptual over/underbraces, italic caption, folded breakdown callout, and folded practice check / computational solve.
+
+---
+
+## Expected Output Format
+
+> [!IMPORTANT]
+> Worker modules output **ONLY** the body content below. Do not generate section headings (`##`, `###`) or introductory quote callouts (`> [!quote]`).
 
 ```markdown
 $$\underbrace{\text{Risk}}_{\text{expected annual loss}} = \overbrace{P(\text{Attack})}^{\text{probability of exploit event}} \times \underbrace{\text{Damage}}_{\text{financial impact in €}}$$
@@ -56,8 +62,8 @@ $$\underbrace{\text{Risk}}_{\text{expected annual loss}} = \overbrace{P(\text{At
 > - $P(\text{Attack})$: Empirical or subjective probability that a specific threat actor successfully identifies and executes an exploit ($0 \le P \le 1$).
 > - $\text{Damage}$: Direct and indirect monetary cost of security failure, including asset replacement, regulatory fines, and reputation loss.
 > - **Comparative Dynamics**:
->   - High-probability, low-impact events (e.g., petty transit fare evasion) produce predictable, linear losses manageable via operational reserves.
->   - Low-probability, catastrophic events (e.g., root CA private key compromise) produce non-linear losses that threaten systemic solvency, warranting heavy proactive defenses.
+>   - High-probability, low-impact events produce predictable, linear losses manageable via operational reserves.
+>   - Low-probability, catastrophic events produce non-linear losses that threaten systemic solvency, warranting heavy proactive defenses.
 
 > [!example]- Conceptual Check
 > **Q:** Why do numerical risk values (e.g., "Risk level = 0.42") often fail to provide actionable security guidance in software engineering?

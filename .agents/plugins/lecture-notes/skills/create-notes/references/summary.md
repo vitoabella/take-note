@@ -1,14 +1,10 @@
 ---
-name: summary
-description: >-
-  Synthesizes the entire lecture into a coherent narrative of fit inside a folded [!tldr] callout,
-  strictly walking the Overview tree in order.
-# Inherits: tone, detail_level, target_audience, foldable_callouts from create-notes/SKILL.md
+# Module-specific overrides
 structure: "overview_aligned"
 foldable_callouts: true
 ---
 
-# Narrative Summary Skill (`/summary`)
+# Narrative Summary Module Specification
 
 Use this skill to populate the master narrative summary (`<!-- MODULE:summary ... -->`) in the lecture note appendix.
 
@@ -16,14 +12,9 @@ Use this skill to populate the master narrative summary (`<!-- MODULE:summary ..
 
 ## Core Guidelines & Format Reference
 
-> [!IMPORTANT]
-> **Summary Contract (Must Strictly Follow the Provided Overview Tree)**:
-> The summary MUST follow every bullet below without exception.
-
-### 1. Structure & Placement
-- Place the summary exclusively under the heading:
+### 1. Structure & Callout Container
+- The summary is placed inside a `> [!tldr]` callout:
   ```markdown
-  ## Summary
   > [!tldr]
   > ...
   ```
@@ -44,10 +35,23 @@ Use this skill to populate the master narrative summary (`<!-- MODULE:summary ..
 
 ---
 
-## Reference Template
+## Depth Specification
+
+- **`depth="1"` (Mentioned in Passing)**:
+  - High-level narrative summary (1–2 concise paragraphs) capturing the primary arc in relatable terms.
+- **`depth="2"` (Discussed, but not fleshed out)**:
+  - Focused narrative summary (2–3 paragraphs) connecting major section transitions with concise clauses.
+- **`depth="3"` (Explained in-detail in source - Default)**:
+  - Exhaustive narrative of fit (4–5 comprehensive paragraphs) rigorously connecting every node in the Overview tree into a cohesive storyline.
+
+---
+
+## Expected Output Format
+
+> [!IMPORTANT]
+> Worker modules output **ONLY** the body content below. Do not generate section headings (`##`, `###`) or introductory quote callouts (`> [!quote]`).
 
 ```markdown
-## Summary
 > [!tldr]
 > Threat analysis begins with **Security Terminology & Foundations**, establishing that **What is Security?** addresses malicious intent rather than random failures, framing security as a moving target against adaptive adversaries. This demands **Fundamental Terminology & Quantitative Risk** to rigorously differentiate latent vulnerabilities from exploits and calculate financial risk. These concepts underpin **Security Goals: The CIA Triad & Beyond**, expanding classical confidentiality, integrity, and availability into granular access control and privacy. Recognizing **The Adversary & Threat Actors** partitions the operational environment into honest and dishonest participants, pinpointing privileged insiders as the most potent threat.
 >

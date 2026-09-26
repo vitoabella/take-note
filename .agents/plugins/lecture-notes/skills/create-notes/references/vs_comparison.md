@@ -1,14 +1,9 @@
 ---
-name: vs_comparison
-description: >-
-  Generates 2-way comparative analyses (A vs. B) with standard heading syntax,
-  filled criteria tables, and decision heuristics.
-# Inherits: tone, detail_level, target_audience, foldable_callouts from create-notes/SKILL.md
-heading_style: "X vs Y"
+# Module-specific overrides
 foldable_callouts: true
 ---
 
-# 2-Way Comparison Skill (`/vs_comparison`)
+# 2-Way Comparison Module Specification
 
 Use this skill to construct structured 2-way comparisons (`<!-- MODULE:vs_comparison ... -->`) marked in the lecture note skeleton.
 
@@ -16,14 +11,7 @@ Use this skill to construct structured 2-way comparisons (`<!-- MODULE:vs_compar
 
 ## Core Guidelines & Format Reference
 
-### 1. Heading Convention
-- Exactly two compared entities MUST use the heading format:
-  ```markdown
-  ### X vs Y
-  ```
-  *(e.g., `### Security vs Reliability`, `### Open Boarding vs Closed Boarding`).*
-
-### 2. Side-by-Side Comparison Table
+### 1. Side-by-Side Comparison Table
 - Always format the comparison table with Entity X and Entity Y as the columns:
   ```markdown
   | Dimension / Attribute | X | Y |
@@ -33,7 +21,7 @@ Use this skill to construct structured 2-way comparisons (`<!-- MODULE:vs_compar
   ```
 - **Fill Every Cell**: Never leave empty cells or unannotated dashes. Every cell must provide substantive comparison.
 
-### 3. Selection Heuristic Callout
+### 2. Selection Heuristic Callout
 - Accompany the table with a folded tip callout:
   ```markdown
   > [!tip]- Selection Heuristic / Key Trade-Off
@@ -43,11 +31,26 @@ Use this skill to construct structured 2-way comparisons (`<!-- MODULE:vs_compar
 
 ---
 
-## Reference Template
+## Depth Specification
+
+- **`depth="1"` (Mentioned in Passing)**:
+  - 3-row compact comparison table highlighting high-level contrasts using simple, relatable terminology.
+  - Omit the selection heuristic callout.
+- **`depth="2"` (Discussed, but not fleshed out)**:
+  - Standard comparison table (4–5 rows) covering primary operational dimensions.
+  - Includes folded selection heuristic callout (`> [!tip]- Selection Heuristic / Key Trade-Off`) using concise phrases.
+- **`depth="3"` (Explained in-detail in source - Default)**:
+  - Exhaustive multi-attribute comparison table (6+ rows) analyzing technical invariants, threat behavior, and failure modes.
+  - Includes a comprehensive folded trade-off insight callout (`> [!tip]- Trade-Off & Integration Insight`) dissecting architectural edge cases and integration guidance.
+
+---
+
+## Expected Output Format
+
+> [!IMPORTANT]
+> Worker modules output **ONLY** the body content below. Do not generate section headings (`##`, `###`) or introductory quote callouts (`> [!quote]`).
 
 ```markdown
-### Security vs Reliability
-
 | Dimension / Attribute | Security Engineering | Reliability Engineering |
 | :--- | :--- | :--- |
 | **Nature of Threat** | Intelligent, adaptive adversaries with malicious intent | Random physical faults, environmental decay, and benign design errors |

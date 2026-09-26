@@ -1,14 +1,10 @@
 ---
-name: analogy
-description: >-
-  Explains complex technical concepts with intuitive mental models, real-world analogies,
-  and conceptual unpackings using folded [!tip]- callouts.
-# Inherits: tone, detail_level, target_audience, foldable_callouts from create-notes/SKILL.md
+# Module-specific overrides
 callout_type: "tip"
 foldable_callouts: true
 ---
 
-# Analogy Skill (`/analogy`)
+# Analogy Module Specification
 
 Use this skill to populate conceptual analogy modules (`<!-- MODULE:analogy ... -->`) in the lecture note skeleton.
 
@@ -21,14 +17,27 @@ Use this skill to populate conceptual analogy modules (`<!-- MODULE:analogy ... 
 - Voice: Strong student explaining to a peer — digestible, intuitive, yet technically grounded.
 
 ### 2. Tripartite Structure of an Analogy
-Every analogy must be unpacked across three clear dimensions:
-1. **The Intuitive Real-World Metaphor**: Ground the abstract mechanism in a familiar physical or operational scenario (e.g., notary public, physical passport, bicycle lock, post office).
-2. **Structural Mapping (Isomorphism)**: Explicitly map each element of the real-world metaphor to its technical counterpart (e.g., *seal on envelope* $\rightarrow$ *cryptographic signature*, *notary public* $\rightarrow$ *Certificate Authority*).
-3. **Boundary & Breakdown Analysis**: Explicitly call out where the metaphor breaks down and ceases to hold. This prevents false mental models and highlights edge cases.
+1. **The Intuitive Real-World Metaphor**: Ground the abstract mechanism in a familiar physical or operational scenario.
+2. **Structural Mapping (Isomorphism)**: Explicitly map each element of the real-world metaphor to its technical counterpart.
+3. **Boundary & Breakdown Analysis**: Explicitly call out where the metaphor breaks down and ceases to hold.
 
 ---
 
-## Reference Template
+## Depth Specification
+
+- **`depth="1"` (Mentioned in Passing)**:
+  - 1–2 sentence intuitive real-world metaphor in a folded tip callout; omit structural mapping and breakdown.
+- **`depth="2"` (Discussed, but not fleshed out)**:
+  - Folded tip callout (`> [!tip]- Analogy: [Concept]`) with metaphor and concise bulleted structural mapping.
+- **`depth="3"` (Explained in-detail in source - Default)**:
+  - Full tripartite structure: Intuitive Real-World Metaphor, Granular Structural Mapping / Isomorphism, and Explicit Boundary & Breakdown Analysis.
+
+---
+
+## Expected Output Format
+
+> [!IMPORTANT]
+> Worker modules output **ONLY** the body content below. Do not generate section headings (`##`, `###`) or introductory quote callouts (`> [!quote]`).
 
 ```markdown
 > [!tip]- Analogy: Public Key Infrastructure as a Notary & Passport Office

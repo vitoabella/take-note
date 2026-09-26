@@ -1,15 +1,11 @@
 ---
-name: table_formulas
-description: >-
-  Compiles a standardized Appendix formula table with exact columns
-  (Formula, Name, Usage, Answers what).
-# Inherits: target_audience, math_delimiter from create-notes/SKILL.md
+# Module-specific overrides
 sort_order: "appearance"
 tone: "rigorous"
 detail_level: "exhaustive"
 ---
 
-# Appendix Formulas Skill (`/table_formulas`)
+# Formula Table Appendix Specification
 
 Use this skill to compile the master mathematical formula reference table (`<!-- MODULE:table_formulas ... -->`) in the appendix of the lecture note.
 
@@ -17,16 +13,10 @@ Use this skill to compile the master mathematical formula reference table (`<!--
 
 ## Core Guidelines & Format Reference
 
-### 1. Section Header & Placement
-- Place the formula table in the Appendix under:
-  ```markdown
-  ## Formulas
-  ```
+### 1. Omission Rule
+- **Omit If Empty**: If the lecture note contains no mathematical, probabilistic, or cryptographic formulas, emit nothing. Never emit an empty table or template stub.
 
-### 2. Omission Rule
-- **Omit If Empty**: If the lecture note contains no mathematical, probabilistic, or cryptographic formulas, omit the entire `## Formulas` subsection completely. Never emit an empty table or template stub.
-
-### 3. Exact 4-Column Table Structure
+### 2. Exact 4-Column Table Structure
 The table MUST strictly use these four columns:
 ```markdown
 | Formula | Name | Usage | Answers what |
@@ -38,11 +28,23 @@ The table MUST strictly use these four columns:
 
 ---
 
-## Reference Template
+## Depth Specification
+
+- **`depth="1"` (Mentioned in Passing)**:
+  - Primary foundational equations only with concise 1-clause usage notes.
+- **`depth="2"` (Discussed, but not fleshed out)**:
+  - Standard formulas with short usage summaries and practical questions answered.
+- **`depth="3"` (Explained in-detail in source - Default)**:
+  - Comprehensive mathematical and cryptographic formula inventory covering all equations, derivations, scoring indices, and bounding constraints from the lecture.
+
+---
+
+## Expected Output Format
+
+> [!IMPORTANT]
+> Worker modules output **ONLY** the body content below. Do not generate section headings (`##`, `###`) or introductory quote callouts (`> [!quote]`).
 
 ```markdown
-## Formulas
-
 | Formula | Name | Usage | Answers what |
 | :---: | :--- | :--- | :--- |
 | $\text{Risk} = P(\text{Attack}) \times \text{Damage}$ | **Quantitative Risk** | Calculating expected annualized financial loss during asset risk assessment. | How much monetary loss should we expect from a specific threat scenario? |

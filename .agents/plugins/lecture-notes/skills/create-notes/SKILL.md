@@ -1,11 +1,9 @@
----
+﻿---
 name: create-notes
 description: >-
-  Master orchestrator skill for generating comprehensive Obsidian lecture notes from a PDF.
-  Coordinates preprocessing, outline, skeleton, live parallel subagent module population, and appendices.
+  Orchestrator skill for generating comprehensive Obsidian lecture notes from a PDF.
 # Main Configuration (Cascades to all sub-skills unless overridden)
 output_dir: "output"
-output_mode: "single_note"       # 'single_note' or 'atomic_moc'
 tone: "pedagogical"             # 'academic', 'pedagogical', 'rigorous', 'concise'
 detail_level: "standard"        # 'high_level', 'standard', 'detailed', 'exhaustive'
 target_audience: "Undergraduate / Graduate Students"
@@ -21,8 +19,6 @@ parallelism:
 
 # Create Notes Orchestrator (`/create-notes`)
 
-Use this skill to orchestrate the end-to-end generation of publication-grade Obsidian lecture notes from a source PDF document.
-
 ## Configuration Inheritance Model
 
 > [!IMPORTANT]
@@ -33,78 +29,102 @@ Use this skill to orchestrate the end-to-end generation of publication-grade Obs
 
 ---
 
-## Execution Pipeline
-
-1. **Preprocessing & Asset Extraction**: `/convert_pdf` (runs `scripts/convert_pdf.py` per `references/convert_pdf.md`)
-2. **Session Init**: `/start` (per `references/start.md`)
-3. **Outlining**: `/overview` (max 3 levels, $\le 25$ lines, `*` notation for extra topics per `references/overview.md`)
-4. **Scaffolding & Tag Extraction**: `/skeleton` (standard filename `NOTE - <Type> <Number> - <Topic>.md`, direct image embeds, no TOC per `references/skeleton.md`) followed by `scripts/extract_modules.py`
-5. **Parallel Module Population & Live Updates**: Subagents dispatched for `references/formula.md`, `references/graph.md`, `references/example.md`, `references/analogy.md`, `references/list.md`, `references/vs_comparison.md`, `references/multi_comparison.md`, `references/codeblock.md`
-6. **Appendices & Final Compilation**: `references/table_formulas.md`, `references/table_definitions.md` (with section wikilinks), `references/summary.md` (narrative of fit)
-
----
-
 ## Instructions for the Agent
 
+### Execution Model: Strict Phase Gating
+
+> [!IMPORTANT]
+> **Strict Just-In-Time (JIT) Phase Gating**:
+> - **Execute One Phase at a Time**: The pipeline MUST proceed strictly sequentially.
+> - **Zero Speculative Lookahead**: The orchestrator MUST NOT view, inspect, or search reference files or scripts for future pipeline steps (e.g., do NOT inspect `overview.md`, `skeleton.md`, or module specifications during Step 0 or Step 1).
+> - **Just-In-Time Loading**: Read a step's reference file ONLY after the preceding step is complete and explicit user confirmation has been granted (when `pause_between_steps: true`).
+> - **Black-Box Script Execution**: Do NOT view or inspect the Python files in `scripts/`. Execute the documented commands directly. If option discovery is needed, execute `python <script_path> --help` via the shell.
+
+### Step 0: Initialize Session
+- Read **only** [references/init.md](references/init.md). Do NOT inspect any other reference files or downstream scripts.
+- Register source PDF, inspect metadata, and create output directory:
+  ```powershell
+  python .agents/plugins/lecture-notes/skills/create-notes/scripts/create_output_dir.py --output-dir "<output_dir>"
+  ```
+
 ### Step 1: Preprocessing & PDF Conversion
-- Convert the PDF into clean Markdown text and extract all visual images, diagrams, and photos into `<output_dir>/assets/` following [references/convert_pdf.md](./references/convert_pdf.md):
+- Convert the PDF into clean Markdown text and extract all visual images, diagrams, and photos into `<output_dir>/assets/`:
   ```powershell
   python .agents/plugins/lecture-notes/skills/create-notes/scripts/convert_pdf.py --pdf "<pdf_path>" --out-dir "<output_dir>" --doc-name "<doc_name>"
   ```
-- If `log_step_outputs: true`, verify the converted file is saved and log the result to `<output_dir>/logs/01_converted.md`.
-- **User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before proceeding to Step 2.
+- **User Confirmation Check**: If `pause_between_steps: true`, present the summary and pause for user confirmation before loading or executing Step 2.
 
 ### Step 2: Generate Document Outline
-- Generate the study outline tree following [references/overview.md](./references/overview.md) using the converted Markdown file as grounding.
+- **JIT Reference**: Read [references/overview.md](references/overview.md) ONLY after Step 1 confirmation has been received. Do NOT read ahead to `skeleton.md`.
+- Generate the study outline tree following `references/overview.md` using the converted Markdown file as grounding.
 - Enforce hard constraints:
   - Tree MUST ALWAYS be enclosed in opening and closing triple backticks (` ``` `) on separate lines.
   - Max 3 levels (Main $\rightarrow$ Topic $\rightarrow$ Subtopic) and $\le 25$ lines total.
   - Trailing `*` on unmentioned topics.
   - **Silent Clean Erasure**: omit pruned branches cleanly without meta-commentary disclaimers.
 - If `log_step_outputs: true`, save the overview tree to `<output_dir>/logs/02_overview.md`.
-- **User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before proceeding to Step 3.
+- **User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before reading Step 3 references or proceeding to Step 3.
 
-### Step 3: Build Markdown Skeleton & Extract Module Tags
-- Build the structural scaffolding note following [references/skeleton.md](./references/skeleton.md):
+### Step 3: Build Markdown Skeleton & Extract Module Manifest
+- **JIT Reference**: Read [references/skeleton.md](references/skeleton.md) ONLY after Step 2 confirmation has been received.
+- Build the structural scaffolding note following `references/skeleton.md`:
   - Save filename using standardized syntax: `NOTE - <Type> <Number> - <Topic>.md` (e.g. `NOTE - Lec 1 - Threat Analysis.md`).
   - **No Document H1 Title & No Table of Contents**: Document begins directly with YAML frontmatter $\rightarrow$ Opener blockquote $\rightarrow$ `# Overview` $\rightarrow$ Section headings.
   - **Silent Clean Erasure**: Excluded or stopped elements are erased cleanly with no commentary or omission notices.
   - **Quote Callout Immediately Below Header**: Section descriptions must be placed inside `> [!quote]` immediately on the line after the header (no blank line in between).
-  - **Verbatim Source Phrasing**: Follow words and adjectives from slides/readings verbatim (strictly no invented fancy adjectives), assessing which verbatim terms are loaded and marking them in `==**bold highlight**==`.
+  - **Verbatim Source Phrasing**: Follow words and adjectives from slides/readings verbatim (strictly no invented fancy adjectives).
   - **Folded Cite Image Callouts**: Embed slide images inside `> [!cite]- Slide <N>: <Caption>\n> ![[<image>.png]]`.
-  - Insert standardized module tags (`<!-- MODULE:<type> section="..." topic="..." importance="1-4" -->`).
-- Run the module extraction script:
+  - Insert standardized module tags (`<!-- MODULE:<type> section="..." topic="..." depth="1|2|3" -->`).
+- Run the module extraction and dispatch manifest builder:
   ```powershell
-  python .agents/plugins/lecture-notes/skills/create-notes/scripts/extract_modules.py --file "<skeleton_path>.md"
+  python .agents/plugins/lecture-notes/skills/create-notes/scripts/extract_and_dispatch.py --file "<skeleton_path>.md"
   ```
-  Generates per-skill tag lists in `<output_dir>/.modules/<module_type>.txt`.
+  This creates `<output_dir>/.modules/<module_type>.txt` and generates `<output_dir>/.modules/dispatch_manifest.json` containing the pre-computed `Subagents` array.
 - If `log_step_outputs: true`, save the raw skeleton to `<output_dir>/logs/03_skeleton.md`.
 - **User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before proceeding to Step 4.
 
 ### Step 4: Parallel Module Population & Live In-Place Note Modification
-- For each unique module type in `<output_dir>/.modules/`, dispatch subagents using `invoke_subagent`.
-- Point each subagent to its dedicated contract in `references/`:
-  - `formula`: follow [references/formula.md](./references/formula.md)
-  - `graph`: follow [references/graph.md](./references/graph.md)
-  - `example`: follow [references/example.md](./references/example.md)
-  - `analogy`: follow [references/analogy.md](./references/analogy.md)
-  - `list`: follow [references/list.md](./references/list.md)
-  - `vs_comparison`: follow [references/vs_comparison.md](./references/vs_comparison.md)
-  - `multi_comparison`: follow [references/multi_comparison.md](./references/multi_comparison.md)
-  - `codeblock`: follow [references/codeblock.md](./references/codeblock.md)
-- Subagents prioritize higher-importance placeholders (`importance="4"` and `importance="3"`) first.
-- **Live In-Place Modification Rule (Insert Directly Underneath Tag)**:
-  > [!IMPORTANT]
-  > As soon as an individual module subagent finishes generating content for a placeholder, it MUST **immediately insert the populated content directly underneath the `<!-- MODULE:... -->` tag in the main note file**, leaving the comment tag intact above it.
-  > Do NOT delete or replace the `<!-- MODULE:... -->` tag. Preserving the comment anchor allows the user and future agents to reference it for spot-modifications, targeted re-runs, and granular edits.
-  > Do NOT buffer or wait for all modules to finish before editing the main document. This ensures the user can watch the document evolve live in Obsidian.
-- If `log_step_outputs: true`, log each populated module block to `<output_dir>/logs/04_modules_<module_name>.md`.
+> [!CAUTION]
+> **Manager-Only Delegation Invariant**:
+> The orchestrator is strictly prohibited from writing module body content directly in the main thread. You MUST delegate module population to worker subagents.
+
+- Inspect `<output_dir>/.modules/dispatch_manifest.json`.
+- Pass the pre-computed `Subagents` array directly into the `invoke_subagent` tool.
+- When dispatching subagents to create ANY module, enforce the strict boundary invariant:
+Worker modules output ONLY the body content (e.g. table, diagram, formula, list, callout). Do NOT output section headers (##, ###) or quote callouts (> [!quote]), as those are exclusively managed by the skeleton.
+
+Subagents will process their respective tasks according to their assigned reference (loaded JIT by each subagent):
+  - `formula`: follow [references/formula.md](references/formula.md)
+  - `graph`: follow [references/graph.md](references/graph.md)
+  - `example`: follow [references/example.md](references/example.md)
+  - `analogy`: follow [references/analogy.md](references/analogy.md)
+  - `list`: follow [references/list.md](references/list.md)
+  - `vs_comparison`: follow [references/vs_comparison.md](references/vs_comparison.md)
+  - `multi_comparison`: follow [references/multi_comparison.md](references/multi_comparison.md)
+  - `codeblock`: follow [references/codeblock.md](references/codeblock.md)
+  - `quiz`: follow [references/quiz.md](references/quiz.md)
+- **Live In-Place Insertion**: Subagents insert their populated content directly underneath the target tag using `insert_module.py`:
+  ```powershell
+  python .agents/plugins/lecture-notes/skills/create-notes/scripts/insert_module.py --note "<skeleton_path>.md" --module "<module_type>" --section "<section_num>" --content-file "<content_path>"
+  ```
+  This preserves the comment anchor intact above the content for spot-modifications.
+- If `log_step_outputs: true`, log each populated module block to `<output_dir>/logs/04_modules_<module_name>.md` containing strictly the module tag followed by the generated content underneath (no wrapper headers or commentary):
+  ```markdown
+  <!-- MODULE:<type> section="..." topic="..." depth="..." -->
+  <generated module body content>
+  ```
 - **User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before proceeding to Step 5.
 
-### Step 5: Appendices & Final Assembly
-- Populate the appendices according to:
-  - `table_formulas`: follow [references/table_formulas.md](./references/table_formulas.md)
-  - `table_definitions`: follow [references/table_definitions.md](./references/table_definitions.md) (with section wikilinks `[[#Section|Term]]`)
-  - `summary`: follow [references/summary.md](./references/summary.md) (narrative of fit inside `> [!tldr]`)
-- Live-modify the main document to insert each appendix block directly underneath its corresponding `<!-- MODULE:... -->` tag, keeping the tag intact for future reference.
+### Step 5: Appendices Assembly
+- **JIT Reference**: Inspect appendix references ONLY when this step is reached:
+  - `table_formulas`: follow [references/table_formulas.md](references/table_formulas.md)
+  - `table_definitions`: follow [references/table_definitions.md](references/table_definitions.md) (with section wikilinks `[[#Section|Term]]`)
+  - `summary`: follow [references/summary.md](references/summary.md) (narrative of fit inside `> [!tldr]`)
+- Spliced directly underneath their respective tags using `insert_module.py`.
+
+### Step 6: Deterministic Format Enforcement & Verification
+- Execute `format_enforcer.py` on the finished note to guarantee all whitespace, callout, and KaTeX invariants:
+  ```powershell
+  python .agents/plugins/lecture-notes/skills/create-notes/scripts/format_enforcer.py --file "<note_path>.md"
+  ```
 - If `log_step_outputs: true`, log final state to `<output_dir>/logs/05_final_note.md`.

@@ -1,14 +1,10 @@
 ---
-name: example
-description: >-
-  Provides concrete real-world scenarios, case studies, attack walkthroughs,
-  and worked exercises using folded [!example]- callouts.
-# Inherits: tone, detail_level, target_audience, foldable_callouts from create-notes/SKILL.md
+# Module-specific overrides
 callout_type: "example"
 foldable_callouts: true
 ---
 
-# Example Skill (`/example`)
+# Example Module Specification
 
 Use this skill to populate concrete real-world examples, case studies, attack scenarios, and worked problems (`<!-- MODULE:example ... -->`) in the lecture note skeleton.
 
@@ -17,33 +13,33 @@ Use this skill to populate concrete real-world examples, case studies, attack sc
 ## Core Guidelines & Format Reference
 
 ### 1. Callout Convention
-- Always format examples inside folded callouts: `> [!example]- [Title]`.
+- Format examples inside folded callouts: `> [!example]- [Title]`.
 - Voice: Strong student explaining to a peer — technically precise, banishing lazy one-sentence stubs.
 - Anti-Laziness Rule: Expand named concepts to mechanisms, assumptions, operational workflows, and practical pitfalls.
 
 ### 2. Supported Example Modes
-
-#### Mode A: Case Study / Attack Walkthrough
-Used for real-world systems, protocols, or concrete attack implementations:
-- **Operational Scenario / Context**: Background of the target system.
-- **Mechanism / Execution Steps**: Step-by-step trace of how the attack or workflow occurs.
-- **Impact & Mitigations**: Real-world consequence and architectural defense.
-
-#### Mode B: Worked Practice Problem / Calculation
-Used for quantitative problems or algorithmic executions:
-- **Problem:** Clear setup with given numbers and variables.
-- **Answer:** Step-by-step algebraic or conceptual solution.
-
-#### Mode C: Conceptual Check
-Used for probing trade-offs and boundary conditions:
-- **Q:** Precise probing question on limiting cases or trade-offs.
-- **A:** Detailed explanation of the underlying mechanism.
+- **Mode A: Case Study / Attack Walkthrough**: Context, Step-by-Step Attack Mechanism, Vulnerability Analysis & Mitigations.
+- **Mode B: Worked Practice Problem / Calculation**: Problem setup with given numbers, step-by-step Answer.
+- **Mode C: Conceptual Check**: Q&A probing limiting cases and trade-offs.
 
 ---
 
-## Reference Templates
+## Depth Specification
 
-### Case Study / Attack Walkthrough
+- **`depth="1"` (Mentioned in Passing)**:
+  - 1-paragraph brief relatable scenario in a callout; no multi-step breakdown.
+- **`depth="2"` (Discussed, but not fleshed out)**:
+  - Folded example callout (`> [!example]- [Title]`) with a concise 3-step mechanism trace.
+- **`depth="3"` (Explained in-detail in source - Default)**:
+  - Comprehensive 4-part case study / attack walkthrough (Context, Step-by-Step Attack Mechanism, Vulnerability Analysis, Architectural Mitigations).
+
+---
+
+## Expected Output Format
+
+> [!IMPORTANT]
+> Worker modules output **ONLY** the body content below. Do not generate section headings (`##`, `###`) or introductory quote callouts (`> [!quote]`).
+
 ```markdown
 > [!example]- Passenger Attack Vector: Dynamic Animation Replication in Counterfeit Tickets
 > **System Context**: Helsinki Regional Transport (HSL) mobile ticketing relies on visual inspection by bus drivers alongside QR code verification by roaming inspectors.
@@ -56,11 +52,4 @@ Used for probing trade-offs and boundary conditions:
 > **Vulnerability & Countermeasure**:
 > - *Vulnerability*: Decoupling visual validation (unauthenticated eye check) from cryptographic validation (digital signature verification).
 > - *Mitigation*: Closed boarding gates or mandatory optical barcode scanning connected to an offline cryptographic public-key verifier.
-```
-
-### Conceptual Check
-```markdown
-> [!example]- Conceptual Check: Ticket Recovery Exploitation
-> **Q:** How can a commuter exploit failure-recovery penalty fee cancellation policies without paying for a monthly pass?
-> **A:** If a commuter is caught without a ticket and claims their phone battery died, transit policy may allow retroactive cancellation of the penalty fee upon presenting a valid personal monthly subscription within 3 days. A non-paying commuter borrows a friend's monthly pass post-incident to cancel the citation. The countermeasure is binding the subscription strictly to verified national identity tokens or disallowing third-party post-validation.
 ```
