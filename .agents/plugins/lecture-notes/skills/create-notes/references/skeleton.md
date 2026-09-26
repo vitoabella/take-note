@@ -7,12 +7,10 @@ foldable_callouts: false
 The structure of the lecture note based on the hierarchical tree produced by `/overview` and the extracted assets from `/convert_pdf`.
 
 ---
-
 ## Verbatim Source Wording
-
+x`
 - The technical terms, and adjectives in topic headers and descriptions MUST strictly follow the source material (the slides/reading text) however you may rephrase to form a cohesive narrative.
 - **Do NOT default to sophisticated or flowery adjectives** (e.g., avoid inventing "heterogeneous distributed components",, or "confidentiality perimeter collapses" unless those exact terms appear in the source).
-
 ---
 
 ## YAML Frontmatter
@@ -28,35 +26,36 @@ topic:
 ---
 ## Visual Assets in Folded Cite Callouts (`> [!cite]-`)
 
-> [!IMPORTANT]
-> **Folded Cite Callouts for Images**:
-> Visual assets from the PDF (diagrams, architectural schematics, flowcharts, photographs, UI screenshots) are extracted into `/assets` by `/convert_pdf`.
-> - Do **NOT** paste raw `![[...]]` image links outside callouts.
-> - Always embed images inside folded cite callouts matching this exact format:
->   ```markdown
->   > [!cite]- Slide|Figure <N>: <Short descriptive caption of what the image shows>
->   > ![[<image_filename>.png]]
->   > <Short explanation on what's happening in the image>
->   ```
+
+**Folded Cite Callouts for Images**:
+Visual assets from the PDF (diagrams, architectural schematics, flowcharts, photographs, UI screenshots) are extracted into `/assets` by `/convert_pdf`.
+- Do **NOT** paste raw `![[...]]` image links outside callouts.
+- Always embed images inside folded cite callouts matching this exact format:
+  ```markdown
+  > [!cite]- Slide|Figure <N>: <Short descriptive caption of what the image shows>
+  > ![[<image_filename>.png]]
+  > <Short explanation on what's happening in the image>
+  ```
 
 ---
 ## Standardized Module Placeholder Syntax
 
-> [!IMPORTANT]
-> **Placeholder Syntax with Depth Property**:
-> Placeholders for text, math, code, and diagram modules MUST strictly follow this syntax:
-> ```html
-> <!-- MODULE:<MODULE_TYPE> section="<section_number>" topic="<topic_description>" depth="<1|2|3>" -->
-> ```
+
+**Placeholder Syntax with Depth Property**:
+Placeholders for text, math, code, and diagram modules MUST strictly follow this syntax:
+```html
+<!-- MODULE:<MODULE_TYPE> section="<section_number>" topic="<topic_description>" depth="<1|2|3>" -->
+```
 >
-> **Global Depth Scale (1–3)**:
-> - `depth="1"`: Mentioned in passing; do not over-elaborate; simple, relatable, easy-to-remember terms.
-> - `depth="2"`: Discussed, but not fleshed out; foldouts folded by default (`> [!...]-`); short phrases if no foldouts.
-> - `depth="3"`: Explained in-detail in source (default).
+**Global Depth Scale (1–3)**:
+Provide a depth value according to how much detail the topic/subtopic was discussed in the source material. This value will guide the module on how much information to create. Use value accordingly below:
+- `depth="1"`: Content of topic was mentioned in passing in the source text. Do not over-elaborate in the module; Use simple, relatable, easy-to-remember terms.
+- `depth="2"`: Content of topic was briefly discussed, not fleshed out in the source text. Module may elaborate further; Use folded foldouts (`> [!...]-`) or short phrases if no foldouts.
+- `depth="3"`: Content of topic was explained in full detail in the source. Module may add missing information to make the topic narrative cohesive.
 
 ### Allowed Module Types & Decision Matrix
 
-- Be conservative with adding modules. Only add what is needed to learn the topic. The learner may ask for additional information or modules as needed.
+- Be conservative with adding modules. Only add what is needed to learn the topic. The learner/user will ask for additional information or modules as needed.
 
 | Module Type        | When to Add                                                                                                                                                                 | When to Exclude                                                                                                                                                                                      |
 | :----------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -71,9 +70,10 @@ topic:
 | `quiz`             | At the conclusion of a major section or conceptually rich topic to reinforce learning through self-assessment questions probing mechanisms, limiting cases, and trade-offs. | Trivial introductory sections, purely administrative slides, or sections where a quiz callout would be redundant with conceptual check practice callouts already present in formula/example modules. |
 
 ---
-## Skeleton scaffold
+## Output Shape
 
 ```markdown
+<yaml_frontmatter>
 <md_content_from_overview>
 
 # Topic 1
@@ -122,18 +122,13 @@ topic:
    - Insert Obsidian YAML frontmatter
    - Insert Opener Blockquote and `# Overview` fenced tree.
 4. **Insert Section Headings & Quote Callout Descriptions**:
-   - For every section in the outline, write markdown headings.
-   - Immediately under the header line (no blank line in between), insert introductory description inside `> [!quote]` using verbatim source phrasing.
-5. **Embed Assets in Folded Cite Callouts**:
+   - For every section in the outline, write unnumbered markdown headings.
+   - Immediately under the header line (no blank line in between), insert introductory description inside `> [!quote]`.
+   - Ensure that the description highlights the topic's importance and relevance to the main topic or the previous topic/subtopic.
+   - If there is an abbreviated word that hasn't been explained, comment the first occurrence in this format `{==<word>==}{{author="Definition">><definition of the abbreviated word><<}}`
+1. **Embed Assets in Folded Cite Callouts**:
    - Embed extracted slide images inside `> [!cite]- Slide N: Caption\n> ![[...]]`
 6. **Insert Standardized Module Placeholders**:
    - Insert standardized module tags with appropriate depth (`depth="1|2|3"`).
 7. **Insert Appendices Scaffolding**:
    - Under `## Appendix`, insert `### Formulas`, `### Definition of Terms`, and `### Summary` with their respective tags.
-8. **Save Skeleton File**:
-   - Save to `<output_dir>/NOTE - <Type> <Number> - <Topic>.md`.
-   - **Type codes:**
-      - `Lec`: Lectures / Slide Decks
-      - `Quiz`: Exam / Quiz Reviews
-      - `Code`: Jupyter Notebooks / Code Walkthroughs
-      - `Read`: Readings / Academic Papers

@@ -14,7 +14,7 @@ math_delimiter: "standard"      # $ for inline, $$ for display block
 pause_between_steps: true       # If true, pauses after each pipeline phase for user confirmation
 log_step_outputs: true          # If true, saves intermediate step outputs to <output_dir>/logs/
 parallelism:
-  max_subagents: 3
+  max_subagents: 10
 ---
 
 # Create Notes Orchestrator (`/create-notes`)
@@ -40,11 +40,6 @@ parallelism:
 > - **Just-In-Time Loading**: Read a step's reference file ONLY after the preceding step is complete and explicit user confirmation has been granted (when `pause_between_steps: true`).
 > - ...**User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before proceeding to next step.
 
-### Step 0: Initialize Session
-- Run command below to create the output directory
-  ```powershell
-  python .agents/plugins/lecture-notes/skills/create-notes/scripts/create_output_dir.py --output-dir "<output_dir>"
-  ```
 ### Step 1: Preprocessing & PDF Conversion
 - Run command below to convert the PDF into clean Markdown text into `<output_dir>` and extract images into `<output_dir>/assets/`:
   ```powershell
@@ -62,44 +57,37 @@ parallelism:
 
 ### Step 2: Generate Document Outline
 - Generate the study outline tree following `references/overview.md` using the converted Markdown file as grounding.
-- If `log_step_outputs: true`, save the overview tree to `<output_dir>/logs/02_overview.md`.
+- If `log_step_outputs: true`, save the overview tree to `<output_dir>/logs/02_overview.md` via `write_to_file` tool.
 - ...**Perform User Confirmation Check**
 
 ### Step 3: Build Markdown Skeleton
 - Build the structural scaffolding note following `references/skeleton.md`
+- If `log_step_outputs: true`, save the it to `<output_dir>/logs/03_skeleton.md` via `write_to_file` tool.
+- Save to `<output_dir>/NOTE - <Type> <Number> - <Topic>.md` via `write_to_file` tool.
+   - **Type codes:**
+      - `Lec`: Lectures / Slide Decks
+      - `Quiz`: Exam / Quiz Reviews
+      - `Code`: Jupyter Notebooks / Code Walkthroughs
+      - `Read`: Readings / Academic Papers
 - ...**Perform User Confirmation Check**
 
 ### Step 4: Parallel Module Population & Live In-Place Note Modification
-> [!CAUTION]
-> **Manager-Only Delegation Invariant**:
-> The orchestrator is strictly prohibited from writing module body content directly in the main thread. You MUST delegate module population to worker subagents.
 
-- Inspect `<output_dir>/.modules/dispatch_manifest.json`.
-- Pass the pre-computed `Subagents` array directly into the `invoke_subagent` tool.
-- When dispatching subagents to create ANY module, enforce the strict boundary invariant:
-Worker modules output ONLY the body content (e.g. table, diagram, formula, list, callout). Do NOT output section headers (##, ###) or quote callouts (> [!quote]), as those are exclusively managed by the skeleton.
-
-Subagents will process their respective tasks according to their assigned reference (loaded JIT by each subagent):
-  - `formula`: follow [references/formula.md](references/formula.md)
-  - `graph`: follow [references/graph.md](references/graph.md)
-  - `example`: follow [references/example.md](references/example.md)
-  - `analogy`: follow [references/analogy.md](references/analogy.md)
-  - `list`: follow [references/list.md](references/list.md)
-  - `vs_comparison`: follow [references/vs_comparison.md](references/vs_comparison.md)
-  - `multi_comparison`: follow [references/multi_comparison.md](references/multi_comparison.md)
-  - `codeblock`: follow [references/codeblock.md](references/codeblock.md)
-  - `quiz`: follow [references/quiz.md](references/quiz.md)
-- **Live In-Place Insertion**: Subagents insert their populated content directly underneath the target tag using `insert_module.py`:
-  ```powershell
-  python .agents/plugins/lecture-notes/skills/create-notes/scripts/insert_module.py --note "<skeleton_path>.md" --module "<module_type>" --section "<section_num>" --content-file "<content_path>"
-  ```
-  This preserves the comment anchor intact above the content for spot-modifications.
-- If `log_step_outputs: true`, log each populated module block to `<output_dir>/logs/04_modules_<module_name>.md` containing strictly the module tag followed by the generated content underneath (no wrapper headers or commentary):
+- Run script
+```
+python .agents/plugins/lecture-notes/skills/create-notes/scripts/extract_modules.py --file "<output_dir>/<file>" --out-dir "<output_dir>/.modules/"
+```
+- Use `invoke_subagent` tool for every outputted `<module>.txt` with the prompt:
+  ````markdown
+  - Write the module: <module> following the [reference file](references/<module>.md)
+  - If `lot_step_outputs: true`, save the output using `write_to_file` in `<output_dir>/logs/04_<module>.md`
+  - Use `multi_replace_file_content` to insert the module on file `<output_dir>/NOTE - <Type> <Number> - <Topic>.md` according to the <!-- Module: ... --> tag. Put the output below the module tag without removing the tag. For example:
   ```markdown
   <!-- MODULE:<type> section="..." topic="..." depth="..." -->
-  <generated module body content>
+  <generated module content>
   ```
-- ...**Perform User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before proceeding to next step.
+  ````
+- **Perform User Confirmation Check**
 
 ### Step 5: Appendices Assembly
 - **JIT Reference**: Inspect appendix references ONLY when this step is reached:
