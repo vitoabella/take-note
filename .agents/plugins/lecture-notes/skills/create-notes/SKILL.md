@@ -38,6 +38,7 @@ parallelism:
 > - **Execute One Phase at a Time**: The pipeline MUST proceed strictly sequentially.
 > - **Zero Speculative Lookahead**: The orchestrator MUST NOT view, inspect, or search reference files or scripts for future pipeline steps (e.g., do NOT inspect `overview.md`, `skeleton.md`, or module specifications during Step 0 or Step 1).
 > - **Just-In-Time Loading**: Read a step's reference file ONLY after the preceding step is complete and explicit user confirmation has been granted (when `pause_between_steps: true`).
+> - ...**User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before proceeding to next step.
 
 ### Step 0: Initialize Session
 - Run command below to create the output directory
@@ -45,12 +46,12 @@ parallelism:
   python .agents/plugins/lecture-notes/skills/create-notes/scripts/create_output_dir.py --output-dir "<output_dir>"
   ```
 ### Step 1: Preprocessing & PDF Conversion
-- Run command below to convert the PDF into clean Markdown text and extract images into `<output_dir>/assets/`:
+- Run command below to convert the PDF into clean Markdown text into `<output_dir>` and extract images into `<output_dir>/assets/`:
   ```powershell
   python .agents/plugins/lecture-notes/skills/create-notes/scripts/convert_pdf.py --pdf "<pdf_path>" --out-dir "<output_dir>" --doc-name "<doc_name>"
   ```
 
-- **User Confirmation Check**: If `pause_between_steps: true`, present the summary and pause for user confirmation before loading or executing Step 2:
+- ...**Perform User Confirmation Check**: If `pause_between_steps: true`, present the summary and pause for user confirmation before loading or executing Step 2:
   | Property | Effective Value | Source |
   | :--- | :--- | :--- |
   | Source PDF | `<path>` | User Input |
@@ -62,12 +63,11 @@ parallelism:
 ### Step 2: Generate Document Outline
 - Generate the study outline tree following `references/overview.md` using the converted Markdown file as grounding.
 - If `log_step_outputs: true`, save the overview tree to `<output_dir>/logs/02_overview.md`.
-- **User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before reading Step 3 references or proceeding to Step 3.
+- ...**Perform User Confirmation Check**
 
-### Step 3: Build Markdown Skeleton & Extract Module Manifest
-- Build the structural scaffolding note following `references/skeleton.md`:
-  - Save filename using standardized syntax: `NOTE - <Type> <Number> - <Topic>.md` (e.g. `NOTE - Lec 1 - Threat Analysis.md`).
-- **User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before proceeding to Step 4.
+### Step 3: Build Markdown Skeleton
+- Build the structural scaffolding note following `references/skeleton.md`
+- ...**Perform User Confirmation Check**
 
 ### Step 4: Parallel Module Population & Live In-Place Note Modification
 > [!CAUTION]
@@ -99,7 +99,7 @@ Subagents will process their respective tasks according to their assigned refere
   <!-- MODULE:<type> section="..." topic="..." depth="..." -->
   <generated module body content>
   ```
-- **User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before proceeding to Step 5.
+- ...**Perform User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before proceeding to next step.
 
 ### Step 5: Appendices Assembly
 - **JIT Reference**: Inspect appendix references ONLY when this step is reached:
