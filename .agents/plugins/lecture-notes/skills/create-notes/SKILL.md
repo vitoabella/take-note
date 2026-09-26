@@ -38,49 +38,35 @@ parallelism:
 > - **Execute One Phase at a Time**: The pipeline MUST proceed strictly sequentially.
 > - **Zero Speculative Lookahead**: The orchestrator MUST NOT view, inspect, or search reference files or scripts for future pipeline steps (e.g., do NOT inspect `overview.md`, `skeleton.md`, or module specifications during Step 0 or Step 1).
 > - **Just-In-Time Loading**: Read a step's reference file ONLY after the preceding step is complete and explicit user confirmation has been granted (when `pause_between_steps: true`).
-> - **Black-Box Script Execution**: Do NOT view or inspect the Python files in `scripts/`. Execute the documented commands directly. If option discovery is needed, execute `python <script_path> --help` via the shell.
 
 ### Step 0: Initialize Session
-- Read **only** [references/init.md](references/init.md). Do NOT inspect any other reference files or downstream scripts.
-- Register source PDF, inspect metadata, and create output directory:
+- Run command below to create the output directory
   ```powershell
   python .agents/plugins/lecture-notes/skills/create-notes/scripts/create_output_dir.py --output-dir "<output_dir>"
   ```
-
 ### Step 1: Preprocessing & PDF Conversion
-- Convert the PDF into clean Markdown text and extract all visual images, diagrams, and photos into `<output_dir>/assets/`:
+- Run command below to convert the PDF into clean Markdown text and extract images into `<output_dir>/assets/`:
   ```powershell
   python .agents/plugins/lecture-notes/skills/create-notes/scripts/convert_pdf.py --pdf "<pdf_path>" --out-dir "<output_dir>" --doc-name "<doc_name>"
   ```
-- **User Confirmation Check**: If `pause_between_steps: true`, present the summary and pause for user confirmation before loading or executing Step 2.
+
+- **User Confirmation Check**: If `pause_between_steps: true`, present the summary and pause for user confirmation before loading or executing Step 2:
+  | Property | Effective Value | Source |
+  | :--- | :--- | :--- |
+  | Source PDF | `<path>` | User Input |
+  | Document Title | `<title>` | PDF Title |
+  | Pages Detected | `<total_pages>` | view_file |
+  | Output Target | `<target_output_file>` | Effective Config |
+  | Tone / Detail | `<tone>` / `<detail_level>` | Effective Config |
 
 ### Step 2: Generate Document Outline
-- **JIT Reference**: Read [references/overview.md](references/overview.md) ONLY after Step 1 confirmation has been received. Do NOT read ahead to `skeleton.md`.
 - Generate the study outline tree following `references/overview.md` using the converted Markdown file as grounding.
-- Enforce hard constraints:
-  - Tree MUST ALWAYS be enclosed in opening and closing triple backticks (` ``` `) on separate lines.
-  - Max 3 levels (Main $\rightarrow$ Topic $\rightarrow$ Subtopic) and $\le 25$ lines total.
-  - Trailing `*` on unmentioned topics.
-  - **Silent Clean Erasure**: omit pruned branches cleanly without meta-commentary disclaimers.
 - If `log_step_outputs: true`, save the overview tree to `<output_dir>/logs/02_overview.md`.
 - **User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before reading Step 3 references or proceeding to Step 3.
 
 ### Step 3: Build Markdown Skeleton & Extract Module Manifest
-- **JIT Reference**: Read [references/skeleton.md](references/skeleton.md) ONLY after Step 2 confirmation has been received.
 - Build the structural scaffolding note following `references/skeleton.md`:
   - Save filename using standardized syntax: `NOTE - <Type> <Number> - <Topic>.md` (e.g. `NOTE - Lec 1 - Threat Analysis.md`).
-  - **No Document H1 Title & No Table of Contents**: Document begins directly with YAML frontmatter $\rightarrow$ Opener blockquote $\rightarrow$ `# Overview` $\rightarrow$ Section headings.
-  - **Silent Clean Erasure**: Excluded or stopped elements are erased cleanly with no commentary or omission notices.
-  - **Quote Callout Immediately Below Header**: Section descriptions must be placed inside `> [!quote]` immediately on the line after the header (no blank line in between).
-  - **Verbatim Source Phrasing**: Follow words and adjectives from slides/readings verbatim (strictly no invented fancy adjectives).
-  - **Folded Cite Image Callouts**: Embed slide images inside `> [!cite]- Slide <N>: <Caption>\n> ![[<image>.png]]`.
-  - Insert standardized module tags (`<!-- MODULE:<type> section="..." topic="..." depth="1|2|3" -->`).
-- Run the module extraction and dispatch manifest builder:
-  ```powershell
-  python .agents/plugins/lecture-notes/skills/create-notes/scripts/extract_and_dispatch.py --file "<skeleton_path>.md"
-  ```
-  This creates `<output_dir>/.modules/<module_type>.txt` and generates `<output_dir>/.modules/dispatch_manifest.json` containing the pre-computed `Subagents` array.
-- If `log_step_outputs: true`, save the raw skeleton to `<output_dir>/logs/03_skeleton.md`.
 - **User Confirmation Check**: If `pause_between_steps: true`, pause and ask the user for confirmation before proceeding to Step 4.
 
 ### Step 4: Parallel Module Population & Live In-Place Note Modification
