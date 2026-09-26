@@ -112,11 +112,11 @@ To ensure deterministic execution and prevent tool pollution or unauthorized ope
 ## 4. Standalone Automation Scripts
 
 ### A. PDF Converter & Asset Extractor (`convert_pdf.py`)
-- **Path**: `.agents/skills/create-notes/skills/convert_pdf/scripts/convert_pdf.py`
+- **Path**: `.agents/plugins/lecture-notes/skills/create-notes/scripts/convert_pdf.py`
 - **Dependencies**: `pdfplumber`, `pypdfium2`, `PIL`
 - **CLI Usage**:
   ```powershell
-  python .agents/skills/create-notes/skills/convert_pdf/scripts/convert_pdf.py \
+  python .agents/plugins/lecture-notes/skills/create-notes/scripts/convert_pdf.py \
     --pdf "<path_to_pdf>" \
     --out-dir "./output" \
     --assets-dir "./output/assets" \
@@ -127,11 +127,11 @@ To ensure deterministic execution and prevent tool pollution or unauthorized ope
   Identifies slides with embedded raster images (`len(page.images) > 0`) or complex vector drawings (`curves + lines + rects >= 10`), rendering high-resolution 2.0x PNG assets into `/assets` with sanitized descriptive names.
 
 ### B. Module Tag Scanner & Grouper (`extract_modules.py`)
-- **Path**: `.agents/skills/create-notes/scripts/extract_modules.py`
+- **Path**: `.agents/plugins/lecture-notes/skills/create-notes/scripts/extract_modules.py`
 - **Regex**: `(<!--\s*MODULE:([A-Za-z0-9_-]+)(?:\s+.*?)?-->)`
 - **CLI Usage**:
   ```powershell
-  python .agents/skills/create-notes/scripts/extract_modules.py --file "./output/NOTE - Lec 1 - Threat Analysis.md"
+  python .agents/plugins/lecture-notes/skills/create-notes/scripts/extract_modules.py --file "./output/NOTE - Lec 1 - Threat Analysis.md"
   ```
 - **Outputs**:
   - `stdout`: Bare comma-separated list of unique active module types without quotes:

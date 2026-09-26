@@ -28,7 +28,7 @@ Use this skill to convert raw lecture slide or textbook PDFs into a unified Mark
 1. **Execute Preprocessing Script**:
    Run the standalone conversion script from the terminal:
    ```powershell
-   python .agents/skills/create-notes/skills/convert_pdf/scripts/convert_pdf.py --pdf "<path_to_pdf>" --out-dir "<output_dir>"
+   python .agents/plugins/lecture-notes/skills/create-notes/scripts/convert_pdf.py --pdf "<path_to_pdf>" --out-dir "<output_dir>"
    ```
 2. **Verify Converted Markdown & Assets**:
    - Check that `<output_dir>/<doc_name>_converted.md` was created.

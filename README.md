@@ -91,18 +91,17 @@ NOTE - <Type> <Number> - <Topic>.md
 
 ## Quick Start
 
-1. **Run the Full Pipeline**:
-   ```text
-   /create-notes
-   ```
-   Provide the path to your source PDF when prompted. The orchestrator will convert the document, construct the outline, generate the scaffolding, and coordinate subagents.
-
-2. **Run Individual Skills**:
-   You can also trigger any stage of the pipeline independently:
-   - `/convert_pdf`: Preprocess a PDF and extract visual assets into `/assets`.
-   - `/overview`: Generate or refine a hierarchical topic map.
-   - `/skeleton`: Re-scaffold a document note with module placeholders.
-   - `/formula`, `/graph`, `/example`, `/vs_comparison`: Target and populate specific module blocks.
+### Run the Pipeline
+In the Antigravity chat, trigger the master orchestrator slash command:
+```text
+/create-notes
+```
+Provide the path to your source PDF when prompted. The orchestrator automatically:
+1. Converts the PDF and extracts visual diagrams into `/assets` (`references/convert_pdf.md`).
+2. Generates the 3-level `# Overview` study tree (`references/overview.md`).
+3. Scaffolds the note with verbatim source descriptors and cite callouts (`references/skeleton.md`).
+4. Dispatches specialized subagents to populate KaTeX formulas, Mermaid graphs, and case studies in parallel.
+5. Assembles formula cheat sheets, glossary wikilinks, and narrative summaries in the appendices.
 
 ---
 
