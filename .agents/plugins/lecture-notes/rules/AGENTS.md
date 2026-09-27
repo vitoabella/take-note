@@ -14,3 +14,7 @@ When executing tasks within this plugin or generating Obsidian lecture notes:
    - Helper scripts (`scripts/*.py`) are command-line utilities, NOT reference documents to be read or inspected with file-viewing tools.
    - Always execute the provided PowerShell commands directly using the exact arguments specified in the skill/reference. Do NOT run `--help` or probe flags beforehand.
    - Run `--help` ONLY as an error-recovery fallback if a command actually fails during execution.
+
+4. **Module Reference Standardization Invariant**:
+   - Any modification, refactoring, or creation of module specification files in `skills/create-notes/references/*.md` MUST strictly adhere to the domain-agnostic 3-part schema (`## 1. Visual Skeleton`, `## 2. Depth Matrix`, `## 3. Strict Negative Invariants`) as defined in `references/AGENTS.md`.
+   - Never add domain-specific exemplars (`## 4.`) to module specifications.

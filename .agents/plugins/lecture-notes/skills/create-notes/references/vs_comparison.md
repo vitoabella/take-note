@@ -1,65 +1,40 @@
 ---
-# Module-specific overrides
 foldable_callouts: true
 ---
 
 # 2-Way Comparison Module Specification
 
-Use this skill to construct structured 2-way comparisons (`<!-- MODULE:vs_comparison ... -->`) marked in the lecture note skeleton.
+Use this module to construct side-by-side comparative analyses between exactly two competing paradigms, technologies, architectures, or concepts.
 
 ---
 
-## Core Guidelines & Format Reference
-
-### 1. Side-by-Side Comparison Table
-- Always format the comparison table with Entity X and Entity Y as the columns:
-  ```markdown
-  | Dimension / Attribute | X | Y |
-  | :--- | :--- | :--- |
-  | Attribute 1 | ... | ... |
-  | Attribute 2 | ... | ... |
-  ```
-- **Fill Every Cell**: Never leave empty cells or unannotated dashes. Every cell must provide substantive comparison.
-
-### 2. Selection Heuristic Callout
-- Accompany the table with a folded tip callout:
-  ```markdown
-  > [!tip]- Selection Heuristic / Key Trade-Off
-  > - **Choose / Rely on X when**: Specific operational constraints or workload profiles.
-  > - **Choose / Rely on Y when**: Specific operational constraints or workload profiles.
-  ```
-
----
-
-## Depth Specification
-
-- **`depth="1"` (Mentioned in Passing)**:
-  - 3-row compact comparison table highlighting high-level contrasts using simple, relatable terminology.
-  - Omit the selection heuristic callout.
-- **`depth="2"` (Discussed, but not fleshed out)**:
-  - Standard comparison table (4–5 rows) covering primary operational dimensions.
-  - Includes folded selection heuristic callout (`> [!tip]- Selection Heuristic / Key Trade-Off`) using concise phrases.
-- **`depth="3"` (Explained in-detail in source - Default)**:
-  - Exhaustive multi-attribute comparison table (6+ rows) analyzing technical invariants, threat behavior, and failure modes.
-  - Includes a comprehensive folded trade-off insight callout (`> [!tip]- Trade-Off & Integration Insight`) dissecting architectural edge cases and integration guidance.
-
----
-
-## Expected Output Format
-
-> [!IMPORTANT]
-> Worker modules output **ONLY** the body content below. Do not generate section headings (`##`, `###`) or introductory quote callouts (`> [!quote]`).
+## 1. Visual Skeleton
 
 ```markdown
-| Dimension / Attribute | Security Engineering | Reliability Engineering |
+<!-- MODULE:vs_comparison section="<section_number>" topic="<topic_description>" depth="<1|2|3>" ... -->
+| Dimension / Attribute | <Option A> | <Option B> |
 | :--- | :--- | :--- |
-| **Nature of Threat** | Intelligent, adaptive adversaries with malicious intent | Random physical faults, environmental decay, and benign design errors |
-| **Probability Distribution** | Non-stationary, strategic, and adversarial (game-theoretic) | Stationary statistical distributions (e.g., Poisson processes, MTBF) |
-| **System Property** | Non-functional, qualitative property (difficult to verify) | Quantitative metric (uptime percentage, failure rates) |
-| **Behavior Under Pressure** | Adversary actively probes for the weakest path | Failures occur uniformly across probabilistic component lifetimes |
-| **Goal / Invariant** | Prevent unauthorized bad things despite active subversion | Ensure normal operations continue across expected random stresses |
+| **<Primary Paradigm / Model>** | <Direct comparative analysis> | <Direct comparative analysis> |
+| **<Operational Mechanism>** | <Direct comparative analysis> | <Direct comparative analysis> |
+| **<Resource Overhead / Cost>** | <Direct comparative analysis> | <Direct comparative analysis> |
+| **<Failure Mode / Vulnerability>** | <Direct comparative analysis> | <Direct comparative analysis> |
 
-> [!tip]- Trade-Off & Integration Insight
-> - **Prioritize Security Engineering** whenever external untrusted parties can interact with system interfaces, APIs, or physical assets. A system can be 99.999% reliable under benign workloads while remaining 100% vulnerable to a single malicious packet.
-> - **Prioritize Reliability Engineering** for internal fault containment, hardware redundancy, and gracefully degrading services under natural physical faults.
+> [!tip]- Selection Heuristic & Key Trade-Off
+> - **Choose / Rely on <Option A> when**: <Specific operational constraints, workload profiles, or environment.>
+> - **Choose / Rely on <Option B> when**: <Specific operational constraints, workload profiles, or environment.>
 ```
+
+## 2. Depth Matrix
+
+| Depth | Scale / Scope | Components Included | Tone & Rigor | Fold Stance |
+| :---: | :--- | :--- | :--- | :--- |
+| **`1`** | 2–3 rows | High-level contrast table; omit selection heuristic callout | Simple, accessible | Open table |
+| **`2`** | 4–5 rows | Operational comparison table + folded selection heuristic callout | Standard technical | Table open, callout folded (`-`) |
+| **`3`** | 6+ rows | Invariant & edge-case comparison table + folded comprehensive trade-off insight | Rigorous, edge-case | Table open, callout folded (`-`) |
+
+## 3. Strict Negative Invariants
+
+- **Tag + Body Content Only**: Output ONLY the module tag and the table/callout directly below it.
+- **No Headings or Quote Callouts**: NEVER generate markdown headings (`##`, `###`) or section intro quote callouts (`> [!quote]`).
+- **Never Leave Empty Cells**: Every row must provide substantive, contrasting detail for both options.
+- **Exactly Two Entities**: If comparing 3 or more entities, use `multi_comparison` instead.

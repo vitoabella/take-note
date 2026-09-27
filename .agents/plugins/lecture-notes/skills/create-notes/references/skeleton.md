@@ -8,13 +8,11 @@ The structure of the lecture note based on the hierarchical tree produced by `/o
 
 ---
 ## Verbatim Source Wording
-x`
+
 - The technical terms, and adjectives in topic headers and descriptions MUST strictly follow the source material (the slides/reading text) however you may rephrase to form a cohesive narrative.
-- **Do NOT default to sophisticated or flowery adjectives** (e.g., avoid inventing "heterogeneous distributed components",, or "confidentiality perimeter collapses" unless those exact terms appear in the source).
+- **Do NOT default to sophisticated or flowery adjectives** (e.g., avoid inventing "heterogeneous distributed components", or "confidentiality perimeter collapses" unless those exact terms appear in the source).
 ---
-
 ## YAML Frontmatter
-
 ```markdown
 ---
 date_created:
@@ -22,10 +20,8 @@ course_code:
 topic:
 ---
 ```
-
 ---
 ## Visual Assets in Folded Cite Callouts (`> [!cite]-`)
-
 
 **Folded Cite Callouts for Images**:
 Visual assets from the PDF (diagrams, architectural schematics, flowcharts, photographs, UI screenshots) are extracted into `/assets` by `/convert_pdf`.
@@ -38,38 +34,103 @@ Visual assets from the PDF (diagrams, architectural schematics, flowcharts, phot
   ```
 
 ---
-## Standardized Module Placeholder Syntax
-
-
-**Placeholder Syntax with Depth Property**:
-Placeholders for text, math, code, and diagram modules MUST strictly follow this syntax:
-```html
-<!-- MODULE:<MODULE_TYPE> section="<section_number>" topic="<topic_description>" depth="<1|2|3>" -->
+## Module Placeholder
+### Syntax
+```markdown
+<!-- MODULE:<MODULE_TYPE> section="<section_number>" topic="<topic_description>" depth="<1|2|3>"
+SOURCE: "<...>"
+OBJECTIVE: "<...>"
+SURROUNDING: "<...>"
+-->
 ```
->
-**Global Depth Scale (1–3)**:
-Provide a depth value according to how much detail the topic/subtopic was discussed in the source material. This value will guide the module on how much information to create. Use value accordingly below:
-- `depth="1"`: Content of topic was mentioned in passing in the source text. Do not over-elaborate in the module; Use simple, relatable, easy-to-remember terms.
-- `depth="2"`: Content of topic was briefly discussed, not fleshed out in the source text. Module may elaborate further; Use folded foldouts (`> [!...]-`) or short phrases if no foldouts.
-- `depth="3"`: Content of topic was explained in full detail in the source. Module may add missing information to make the topic narrative cohesive.
+### Properties
 
-### Allowed Module Types & Decision Matrix
+**Context Capsule Fields**:
+To prevent worker subagents from re-reading the entire source PDF or scanning the skeleton, every module placeholder tag is a self-contained **Context Capsule**:
+- **`SOURCE` (Verbatim Grounding)**: 2–4 lines of verbatim bullets, mathematical equations, or raw slide text and slide citations (e.g., `Slide 14-16: ...`).
+- **`OBJECTIVE` (What to Build)**: 1 direct sentence declaring the technical angle, mechanism, or trade-off to illustrate.
+- **`SURROUNDING` (Narrative Fit)**: 1 sentence summarizing the section's intro quote callout (`> [!quote]`) so the subagent continues the narrative without repeating definitions already stated.
 
-- Be conservative with adding modules. Only add what is needed to learn the topic. The learner/user will ask for additional information or modules as needed.
+**Information Depth Property**:
+Provide a depth value according to how much detail the topic/subtopic was discussed in the source material. This value guides the subagent on how much information to generate:
+- `depth="1"`: Mentioned in passing; introductory context, non-technical background; simple, relatable, easy-to-remember terms. Do not over-elaborate.
+- `depth="2"`: Discussed, but not fleshed out; standard core principles, definitions, functional descriptions. Short phrases; foldouts folded by default (`> [!...]-`).
+- `depth="3"`: Explained in-detail in source (default); step-by-step mechanisms, formal rules, technical invariants, multi-variable systems, and failure modes.
 
-| Module Type        | When to Add                                                                                                                                                                 | When to Exclude                                                                                                                                                                                      |
-| :----------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `example`          | Real-world case studies, incidents, deployed systems (e.g. BitLocker, HSL ticketing), concrete attack traces, or worked numerical problems in slides.                       | Purely abstract conceptual definitions without real-world context; or when an example merely restates the definition without demonstrating operational workflow.                                     |
-| `graph`            | Multi-component architectures, protocol message flows, trust boundaries, state machines, or hierarchical threat trees/taxonomies.                                           | Simple linear 2-step sequences better suited for numbered lists; isolated single-component definitions; or when no relationships or interactions exist.                                              |
-| `analogy`          | Counter-intuitive, abstract, or conceptually difficult mechanisms where a familiar physical metaphor clarifies the core idea.                                               | Straightforward, self-explanatory, or descriptive topics (e.g., password expiration); or when an analogy would oversimplify or introduce misleading mental models.                                   |
-| `codeblock`        | Verbatim source code, pseudocode, CLI terminal commands, or configuration files that appeared *explicitly* in the source PDF slides.                                        | If no code or terminal commands appeared in the lecture PDF.                                                                                                                                         |
-| `formula`          | Mathematical models, quantitative metrics, probabilistic risk equations, cryptographic definitions, or scoring formulas present in the source.                              | Purely qualitative discussions; or when an equation is merely symbolic decoration with no mathematical or operational meaning.                                                                       |
-| `list`             | Enumerating properties, taxonomies, multi-step procedures, or unexpounded lists needing callout expansions.                                                                 | Continuous narrative explanations that read better as paragraphs; or when items naturally form a comparative matrix or 2-way trade-off.                                                              |
-| `vs_comparison`    | Exactly two competing paradigms, technologies, architectures, or concepts explicitly contrasted in the lecture                                                              | Comparing 3 or more entities (use `multi_comparison`); or when two items are complementary sequential steps in a pipeline rather than competing alternatives.                                        |
-| `multi_comparison` | Three or more candidate algorithms, models, tools, or frameworks evaluated across shared technical dimensions.                                                              | Comparing only two entities (use `vs_comparison`); or when entities lack common evaluation dimensions.                                                                                               |
-| `quiz`             | At the conclusion of a major section or conceptually rich topic to reinforce learning through self-assessment questions probing mechanisms, limiting cases, and trade-offs. | Trivial introductory sections, purely administrative slides, or sections where a quiz callout would be redundant with conceptual check practice callouts already present in formula/example modules. |
+**Source Weighting Signals**:
+To determine the appropriate `depth` value, evaluate the source PDF across three objective signals:
+1. **Slide Real Estate**:
+   - Sub-bullet on a slide covering multiple topics ($< 0.5$ slide) $\rightarrow$ `depth="1"`
+   - Dedicated slide or prominent half-slide ($1$ slide) $\rightarrow$ `depth="2"`
+   - Multiple dedicated slides ($2+$ slides) or dedicated subsection with diagrams/tables $\rightarrow$ `depth="3"`
+2. **Pedagogical Prominence**:
+   - Incidental/background mention or historical note $\rightarrow$ `depth="1"`
+   - Named slide title, bullet taxonomy, or distinct mechanism $\rightarrow$ `depth="2"`
+   - Core foundational invariant, primary architecture, or central exam case study $\rightarrow$ `depth="3"`
+3. **Exam Relevance Heuristic**:
+   - Contextual background unlikely to be examined independently $\rightarrow$ `depth="1"`
+   - Standard testable concept, definition, or primary procedure $\rightarrow$ `depth="2"`
+   - High-probability exam question (mechanisms, formal trade-offs, attack scenarios) $\rightarrow$ `depth="3"`
+
+## Topic Output Profiles
+
+| Profile | Quote Callout | Module Allocation | Pedagogical Focus |
+| :--- | :--- | :--- | :--- |
+| **Depth 1**<br>*(Passing / Contextual)* | 1 concise sentence verbatim from source. | Maximum 0–1 lightweight module (`depth="1"`). | High-level mental hook; simple relatable terms; zero cognitive clutter; no deep breakdowns. |
+| **Depth 2**<br>*(Standard Core / Mechanism)* | 1–2 precise sentences capturing definition and core properties. | Exactly 1 primary module (`depth="2"`). | Mechanism and operational trade-offs cleanly structured with details folded by default (`-`). |
+| **Depth 3**<br>*(Foundational / In-Depth Invariant)* | 2–3 rigorous sentences capturing formal rules and technical invariants. | 1 major module (`depth="3"`) OR at most 2 complementary modules (Rule of 2). | Full architectural / algorithmic breakdown + self-assessment check or open inquiry thought experiment. |
 
 ---
+
+## Anti-Crowding Constraints & Selection Rules
+
+- **Anti-Crowding Invariant**: Be conservative with adding modules. Only add what is needed to learn the topic. The learner will ask for additional information or modules as needed.
+- **The Rule of 1 (Default)**: Every subtopic receives at most **one** primary module.
+- **The Rule of 2 (Strict Exception)**: A subtopic may receive **two** modules *only* if:
+	1. The topic is **Depth 3** (Foundational / In-Depth Invariant), AND
+	2. The two modules come from **different cognitive categories**:
+
+| Category                           | Allowed Modules                                                   |
+| :--------------------------------- | :---------------------------------------------------------------- |
+| Architectural & Structural         | `graph`, `layered_stack`, `codeblock`                             |
+| Temporal & Sequential Flow         | `process_flow`, `pipeline_stage`, `state_machine`, `causal_chain` |
+| Comparative & Dimensional Analysis | `vs_comparison`, `multi_comparison`, `spectrum`, `formula`        |
+| Conceptual & Empirical Grounding   | `analogy`, `example`, `list`                                      |
+| Evaluative & Socratic Inquiry      | `quiz`, `inquiry`                                                 |
+### How to Choose a Module: Intent Filter
+
+Ask: **"What is the single best way to clarify this topic?"**
+
+1. **Did the slide contain verbatim code or math?** *(Deterministic Gates)*
+   - Verbatim source code, pseudocode, or CLI commands $\rightarrow$ `codeblock`
+   - Explicit mathematical model, risk equation, or scoring formula $\rightarrow$ `formula`
+
+2. **Need to show how components are arranged?** *(Architectural & Structural)*
+   - Vertical abstraction hierarchies (OSI, hardware/OS/app stack) $\rightarrow$ `layered_stack`
+   - Interconnected topologies, trust boundaries, or distributed message flows $\rightarrow$ `graph`
+
+3. **Need to show movement, time, or state evolution?** *(Temporal & Sequential Flow)*
+   - Discrete system states with trigger events and transitions $\rightarrow$ `state_machine`
+   - Data transforming into different representations across stages $\rightarrow$ `pipeline_stage`
+   - Failure cascade, security breach, or root-cause domino progression $\rightarrow$ `causal_chain`
+   - Formal algorithmic execution (Input $\to$ Transformation $\to$ Output) $\rightarrow$ `process_flow`
+
+4. **Need to weigh options or trade-offs?** *(Comparative & Dimensional Analysis)*
+   - Exactly 2 options head-to-head (A vs B) with selection heuristic $\rightarrow$ `vs_comparison`
+   - 3 or more candidate systems evaluated across shared criteria $\rightarrow$ `multi_comparison`
+   - A sliding continuum between two opposing architectural poles $\rightarrow$ `spectrum`
+
+5. **Need to build intuition or ground the concept?** *(Conceptual & Empirical Grounding)*
+   - Physical real-world metaphor for a counter-intuitive abstract concept $\rightarrow$ `analogy`
+   - Concrete attack trace, real incident case study, or worked problem $\rightarrow$ `example`
+   - Structured taxonomy, properties, or unexpounded list expansions $\rightarrow$ `list`
+
+6. **Concluding a major section or testing the learner?** *(Evaluative & Socratic Inquiry)*
+   - Check lecture comprehension with self-assessment questions $\rightarrow$ `quiz`
+   - Provocative "What if?" edge-case puzzle / thought experiment $\rightarrow$ `inquiry`
+
+---
+
 ## Output Shape
 
 ```markdown
@@ -114,21 +175,16 @@ Provide a depth value according to how much detail the topic/subtopic was discus
 
 ## Execution Steps for the Agent
 
-1. **Read Converted Markdown**:
+1. Read Converted Markdown:
    - Inspect the converted Markdown file in `<output_dir>/<doc_name>_converted.md` and check `<output_dir>/assets/` for extracted images.
-2. **Read Overview Outline**:
+2. Read Overview Outline:
    - Inspect the outline produced by `/overview` to determine the complete section hierarchy.
-3. **Generate Frontmatter & Overview:**
-   - Insert Obsidian YAML frontmatter
-   - Insert Opener Blockquote and `# Overview` fenced tree.
-4. **Insert Section Headings & Quote Callout Descriptions**:
+3. Insert Obsidian YAML frontmatter, Opener Blockquote and # Overview fenced tree
+4. Insert Section Headings & Quote Callout Descriptions:
    - For every section in the outline, write unnumbered markdown headings.
    - Immediately under the header line (no blank line in between), insert introductory description inside `> [!quote]`.
    - Ensure that the description highlights the topic's importance and relevance to the main topic or the previous topic/subtopic.
    - If there is an abbreviated word that hasn't been explained, comment the first occurrence in this format `{==<word>==}{{author="Definition">><definition of the abbreviated word><<}}`
-1. **Embed Assets in Folded Cite Callouts**:
-   - Embed extracted slide images inside `> [!cite]- Slide N: Caption\n> ![[...]]`
-6. **Insert Standardized Module Placeholders**:
-   - Insert standardized module tags with appropriate depth (`depth="1|2|3"`).
-7. **Insert Appendices Scaffolding**:
-   - Under `## Appendix`, insert `### Formulas`, `### Definition of Terms`, and `### Summary` with their respective tags.
+5. Embed Assets in Folded Cite Callouts
+6. Insert Standardized Module Placeholders as Context Capsules
+7. Insert Appendices Scaffolding

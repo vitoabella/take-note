@@ -1,59 +1,41 @@
 ---
-# Module-specific overrides
 foldable_callouts: true
 ---
 
 # Multi-Option Comparison Module Specification
 
-Use this skill to populate multi-dimensional comparison tables across 3 or more candidate entities (`<!-- MODULE:multi_comparison ... -->`) in the lecture note skeleton.
+Use this module to evaluate 3 or more candidate systems, algorithms, models, or frameworks across shared technical dimensions.
 
 ---
 
-## Core Guidelines & Format Reference
-
-### 1. Table Construction Rules
-- Hard Rule: **Fill every single table cell**. Never leave empty cells or unexplained dashes.
-- Include concrete, technical evaluation dimensions: Primary Goal, Adversarial Invariant, Overhead, Typical Failure Mode.
-- **Matrix Duals / Encodings**: When comparing access-control or dual models (e.g., ACL vs Capability), emphasize the relevant perspective with bold/highlighted cells.
-
-### 2. Synthesis & Pareto Frontier
-Follow the matrix with a concise breakdown specifying:
-- Which option is optimal under what specific resource or operational constraints.
-- Why no single option dominates all evaluation dimensions.
-
----
-
-## Depth Specification
-
-- **`depth="1"` (Mentioned in Passing)**:
-  - 3-attribute high-level matrix comparing core distinctions using simple, relatable terms.
-  - Omit the synthesis callout.
-- **`depth="2"` (Discussed, but not fleshed out)**:
-  - Standard matrix (4–5 evaluation dimensions) with short phrases.
-  - Includes folded synthesis callout (`> [!info]- Architectural Trade-Off Synthesis`) with concise takeaways.
-- **`depth="3"` (Explained in-detail in source - Default)**:
-  - Exhaustive multi-attribute matrix (6+ dimensions) evaluating technical paradigms across all candidate entities.
-  - Includes a comprehensive folded synthesis callout (`> [!info]- Architectural Trade-Off Synthesis`) analyzing Pareto boundaries and deployment constraints.
-
----
-
-## Expected Output Format
-
-> [!IMPORTANT]
-> Worker modules output **ONLY** the body content below. Do not generate section headings (`##`, `###`) or introductory quote callouts (`> [!quote]`).
+## 1. Visual Skeleton
 
 ```markdown
-| Evaluation Dimension | STRIDE | DREAD | Risk = P × Damage |
+<!-- MODULE:multi_comparison section="<section_number>" topic="<topic_description>" depth="<1|2|3>" ... -->
+| Evaluation Dimension | <Candidate A> | <Candidate B> | <Candidate C> |
 | :--- | :--- | :--- | :--- |
-| **Primary Paradigm** | Component-level threat categorization | Quantitative threat ranking heuristic | Classical economic risk formula |
-| **Input Artifact** | Data Flow Diagram (DFD) with trust boundaries | Discovered threat candidate | Probability distribution & financial loss |
-| **Dimensions Evaluated** | 6 threat classes (S, T, R, I, D, E) | 5 criteria (Damage, Reproducibility, Exploitability, Users, Discoverability) | Likelihood $\times$ Monetary impact (€) |
-| **Scoring Output** | Qualitative presence/absence matrix | Numerical score (e.g., 1–10 per dimension) | Single expected financial value |
-| **Major Strength** | Systematic coverage across software boundaries | Structured multi-factor deliberation | Direct alignment with executive business budgets |
-| **Primary Pitfall** | Identifies threats but does not prioritize | Arbitrary numerical scales masquerading as precision | Adversaries lack historical probability data |
+| **<Primary Objective>** | <Substantive comparison> | <Substantive comparison> | <Substantive comparison> |
+| **<Mechanism / Architecture>** | <Substantive comparison> | <Substantive comparison> | <Substantive comparison> |
+| **<Complexity / Overhead>** | <Substantive comparison> | <Substantive comparison> | <Substantive comparison> |
+| **<Primary Limitation>** | <Substantive comparison> | <Substantive comparison> | <Substantive comparison> |
 
-> [!info]- Architectural Trade-Off Synthesis
-> - **Use STRIDE** during system design and architecture review to uncover latent component vulnerabilities.
-> - **Use Risk = P × Damage** when justifying security capital allocation and compliance expenditures to executive management.
-> - **Caution on DREAD**: Treat DREAD numerical scores as rough relative rankings rather than objective mathematical truths.
+> [!info]- Architectural Trade-Off & Pareto Synthesis
+> - **Optimal for <Workload / Context 1>**: Choose `<Candidate A>` because `<rationale>`.
+> - **Optimal for <Workload / Context 2>**: Choose `<Candidate B>` because `<rationale>`.
+> - **Pareto Frontier**: No single candidate dominates all dimensions; trade-off centers on `<core tension>`.
 ```
+
+## 2. Depth Matrix
+
+| Depth | Scale / Scope | Components Included | Tone & Rigor | Fold Stance |
+| :---: | :--- | :--- | :--- | :--- |
+| **`1`** | 3 dimensions | 3-row matrix across candidates; omit synthesis callout | Concise, high-level | Open table |
+| **`2`** | 4–5 dimensions | Standard matrix + folded trade-off synthesis callout | Standard technical | Table open, callout folded (`-`) |
+| **`3`** | 6+ dimensions | Multi-attribute matrix evaluating invariants, bounds, failure modes + synthesis | Rigorous, comparative | Table open, callout folded (`-`) |
+
+## 3. Strict Negative Invariants
+
+- **Tag + Body Content Only**: Output ONLY the module tag and the table/callout directly below it.
+- **No Headings or Quote Callouts**: NEVER generate markdown headings (`##`, `###`) or section intro quote callouts (`> [!quote]`).
+- **Never Leave Empty Cells**: Every cell must contain meaningful comparative analysis; never output bare dashes or blanks.
+- **Shared Dimensions Only**: Every row must apply equally to all candidate columns.

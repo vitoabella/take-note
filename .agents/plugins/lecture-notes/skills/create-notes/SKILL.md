@@ -84,7 +84,11 @@ python <SKILL_DIR>/scripts/extract_modules.py --file "<output_dir>/<file>"
   - If `lot_step_outputs: true`, save the output using `write_to_file` in `<output_dir>/logs/04_<module>.md`
   - Use `multi_replace_file_content` to insert the module on file `<output_dir>/NOTE - <Type> <Number> - <Topic>.md` according to the <!-- Module: ... --> tag. Put the output below the module tag without removing the tag. For example:
   ```markdown
-  <!-- MODULE:<type> section="..." topic="..." depth="..." -->
+  <!-- MODULE:<type> section="..." topic="..." depth="..."
+  SOURCE: "..."
+  OBJECTIVE: "..."
+  SURROUNDING: "..."
+  -->
   <generated module content>
   ```
   ````
