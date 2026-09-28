@@ -12,6 +12,7 @@ Use this module to construct side-by-side comparative analyses between exactly t
 
 ```markdown
 <!-- MODULE:vs_comparison section="<section_number>" topic="<topic_description>" depth="<1|2|3>" ... -->
+
 | Dimension / Attribute | <Option A> | <Option B> |
 | :--- | :--- | :--- |
 | **<Primary Paradigm / Model>** | <Direct comparative analysis> | <Direct comparative analysis> |

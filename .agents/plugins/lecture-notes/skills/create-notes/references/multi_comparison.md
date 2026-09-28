@@ -12,6 +12,7 @@ Use this module to evaluate 3 or more candidate systems, algorithms, models, or 
 
 ```markdown
 <!-- MODULE:multi_comparison section="<section_number>" topic="<topic_description>" depth="<1|2|3>" ... -->
+
 | Evaluation Dimension | <Candidate A> | <Candidate B> | <Candidate C> |
 | :--- | :--- | :--- | :--- |
 | **<Primary Objective>** | <Substantive comparison> | <Substantive comparison> | <Substantive comparison> |

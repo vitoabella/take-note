@@ -13,6 +13,7 @@ Use this module to detail algorithmic, protocol, or procedural execution steps t
 
 ```markdown
 <!-- MODULE:process_flow section="<section_number>" topic="<topic_description>" depth="<1|2|3>" ... -->
+
 | Step | Action / Phase | Input Parameters | Transformation / Rule | Output & Mutated State |
 | :---: | :--- | :--- | :--- | :--- |
 | **1** | `<Initial Setup>` | `<input_arguments>` | `<initialization_logic>` | `<initial_state_record>` |

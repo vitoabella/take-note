@@ -1,5 +1,6 @@
 .obsidian
-output
-.output
+output*
+.output*
 Prompting Learnings (agent don't read this).md
 scratch
+.samples

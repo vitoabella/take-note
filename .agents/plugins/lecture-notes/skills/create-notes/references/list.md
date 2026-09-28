@@ -21,9 +21,13 @@ Use this module to structure bullet points, procedures, taxonomies, and unexpoun
 
 > [!example]- <Unexpounded Item / Scenario 1>
 > <Expanded definition, operational mechanism, and real-world significance.>
+>
+> ---
 <!-- -->
 > [!example]- <Unexpounded Item / Scenario 2>
 > <Expanded definition, operational mechanism, and real-world significance.>
+>
+> ---
 ```
 
 ## 2. Depth Matrix
